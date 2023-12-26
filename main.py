@@ -660,8 +660,9 @@ def save_edit_card_details():
             )
             ps_connection.commit()
 
+
             # this query is to get the latest table for the specific support_id from trcking table
-            get_last_data_query = """
+            get_new_row_add_data_query = """
                 SELECT id, assign_task, support_state, support_remark, issue_type
                 FROM tracking_table
                     WHERE support_id = %s
@@ -672,43 +673,21 @@ def save_edit_card_details():
                 );
             """
             cur.execute(
-                get_last_data_query, (content["support_id"], content["support_id"])
+                get_new_row_add_data_query, (content["support_id"], content["support_id"])
             )
             records = cur.fetchall()
-            print(records[0])
+            print("------> size of ",records)
 
-            if (
-                content["assign_task"] != records[0][1]
-                or content["issueType"] != records[0][4]
-                or (
-                    content["support_state"] != records[0][2]
-                    and (
-                        content["support_state"].lower() == "ongoing"
-                        or content["support_state"].lower() == "internetissue"
-                    )
-                )
-            ):
-                # this query is to update the data in the last row of tracking_table
-                update_edited_ticket_query = """
-                UPDATE TRACKING_TABLE
-                    SET
-                        resolution_date = %s,
-                        support_remark = %s
-                    WHERE id = %s;
-                """
-                cur.execute(
-                    update_edited_ticket_query,
-                    (content["support_date"], content["supportRemarks"], records[0][0]),
-                )
-                ps_connection.commit()
+            if not records:
+                print("Query result is empty.")
 
-                # Simultaneously we would be adding a new row in the table
+                # if there are no previous tracking record, add a new row here this time
                 add_new_row_query = """
-                    INSERT INTO TRACKING_TABLE
-                    (assign_task, support_state, support_date, Issue_type, support_id)
-                    VALUES
-                        (%s, %s, %s, %s, %s )
-                """
+                        INSERT INTO TRACKING_TABLE
+                        (assign_task, support_state, support_date, Issue_type, support_id)
+                        VALUES
+                            (%s, %s, %s, %s, %s )
+                    """
                 cur.execute(
                     add_new_row_query,
                     (
@@ -721,29 +700,75 @@ def save_edit_card_details():
                 )
                 ps_connection.commit()
 
-            elif (
-                content["support_state"] != records[0][2]
-                and content["support_state"].lower() == "done"
-            ):
-                # this query is to update the data in the last row of tracking_table and make it's state 'resolved' and give it a resolution date with a remark
-                update_edited_ticket_query = """
+            else:
+                print("------**********query result is there")
+                if (
+                    content["assign_task"] != records[0][1]
+                    or content["issueType"] != records[0][4]
+                    or (
+                        content["support_state"] != records[0][2]
+                        and (
+                            content["support_state"].lower() == "ongoing"
+                            or content["support_state"].lower() == "internetissue"
+                        )
+                    )
+                ):
+                    # this query is to update the data in the last row of tracking_table
+                    update_edited_ticket_query = """
                     UPDATE TRACKING_TABLE
-                    SET
-                        support_state = %s,
-                        resolution_date = %s,
-                        support_remark = %s
-                    WHERE id = %s;
-                """
-                cur.execute(
-                    update_edited_ticket_query,
-                    (
-                        content["support_state"],
-                        content["support_date"],
-                        content["supportRemarks"],
-                        records[0][0],
-                    ),
-                )
-                ps_connection.commit()
+                        SET
+                            resolution_date = %s,
+                            support_remark = %s
+                        WHERE id = %s;
+                    """
+                    cur.execute(
+                        update_edited_ticket_query,
+                        (content["support_date"], content["supportRemarks"], records[0][0]),
+                    )
+                    ps_connection.commit()
+
+                    # Simultaneously we would be adding a new row in the table
+                    add_new_row_query = """
+                        INSERT INTO TRACKING_TABLE
+                        (assign_task, support_state, support_date, Issue_type, support_id)
+                        VALUES
+                            (%s, %s, %s, %s, %s )
+                    """
+                    cur.execute(
+                        add_new_row_query,
+                        (
+                            content["assign_task"],
+                            content["support_state"],
+                            content["support_date"],
+                            content["issueType"],
+                            content["support_id"],
+                        ),
+                    )
+                    ps_connection.commit()
+
+                elif (
+                    content["support_state"] != records[0][2]
+                    and content["support_state"].lower() == "done"
+                ):
+                    # this query is to update the data in the last row of tracking_table and make it's state 'resolved' and give it a resolution date with a remark
+                    update_edited_ticket_query = """
+                        UPDATE TRACKING_TABLE
+                        SET
+                            support_state = %s,
+                            resolution_date = %s,
+                            support_remark = %s
+                        WHERE id = %s;
+                    """
+                    cur.execute(
+                        update_edited_ticket_query,
+                        (
+                            content["support_state"],
+                            content["support_date"],
+                            content["supportRemarks"],
+                            records[0][0],
+                        ),
+                    )
+                    ps_connection.commit()
 
             cur.close()
 
