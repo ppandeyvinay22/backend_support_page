@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Show Individual Card Detail</title>
+</head>
+
+<!-- Button to trigger the modal -->
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Full Ticket Details</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body show-data">
+                <!-- Here modal content will come -->
+                <form class="row g-3">
+                    <div class="col-4 ">
+                        <label for="inputEmail4" class="form-label fw-bold">Id</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][0]}}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Created Date</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][1]}}
+                        </div>
+                    </div>
+                    <div class="col-4 ">
+                        <label for="inputEmail4" class="form-label fw-bold">Created By</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][2]}}
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Head Institution</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][22]}}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Location</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][23]}}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Machine Number</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][24]}}
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Support Mode</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][3]}}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Support Priority</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][4]}}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Support Commitment Days</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][5]}}
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Issue Type</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][6]}}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Support State</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][7]}}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Assigned Task To</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {% if data[0][8] == '' %}
+                                Not assigned to anyone yet
+                            {% else %}
+                                {{data[0][8]}}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="inputEmail4" class="form-label fw-bold">Support Remarks</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {% if data[0][9] == '' %}
+                                No Remarks
+                            {% else %}
+                                {{data[0][9]}} 
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <label for="inputEmail4" class="form-label fw-bold">Error Details</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {{data[0][10]}}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <label for="inputEmail4" class="form-label fw-bold">Attachments</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            Atachments will be here
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Resolved By</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {% if data[0][11] == '' %}
+                                Not resolved yet
+                            {% else %}
+                                {{data[0][11]}}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Resolution Detail</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {% if data[0][12] == '' %}
+                                Not resolved or mentioned yet
+                            {% else %}
+                                {{data[0][12]}}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Resolved Date</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {% if data[0][13] == '' %}
+                                Not resolved yet
+                            {% else %}
+                                {{data[0][13]}}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if data[0][14] == True %}
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Visit Start Date</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {% if data[0][15] == '' %}
+                                Not mentioned
+                            {% else %}
+                                {{data[0][15]}}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Visit End Date</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {% if data[0][12] == '' %}
+                                Not resolved or mentioned yet
+                            {% else %}
+                                {{data[0][12]}}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputEmail4" class="form-label fw-bold">Expenses</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {% if data[0][17] == '' %}
+                                Not mentioned
+                            {% else %}
+                              Rs {{data[0][17]}}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <label for="inputEmail4" class="form-label fw-bold">Items Replaced</label>
+                        <div class="form-control read-only-box bg-light" readonly>
+                            <!-- Your read-only content goes here -->
+                            {% if data[0][18] == '' or data[0][18] == 'none' or data[0][18] == 'None' %}
+                                
+                            {% else %}
+                                {{data[0][18]}}, 
+                            {% endif %}
+                            {% if data[0][19] == '' or data[0][19] == 'none' or data[0][19] == 'None' %}
+                                
+                            {% else %}
+                                {{data[0][19]}},
+                            {% endif %}
+                            {% if data[0][20] == '' or data[0][20] == 'none' or data[0][20] == 'None' %}
+                                
+                            {% else %}
+                                {{data[0][20]}},
+                            {% endif %}
+                            {% if data[0][21] == '' or data[0][21] == 'none' or data[0][21] == 'None' %}
+                                Nothing replaced
+                            {% else %}
+                                {{data[0][21]}}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-4">
+                        <button type="button" class="btn btn-primary" >No visit for this ticket</button>
+                    </div>
+                    {% endif %}
+
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and Popper.js (order is important) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+</script>
+
+<script>
+    var data = [
+        [
+            50,
+            "2021-08-05 15:21:12",
+            "hardware",
+            "V39 scanner issue. Scanner deducted but image not scanning.  ",
+            "done",
+            "high",
+            null,
+            "1045"
+        ]
+    ]
+</script>
+</body>
+
+</html>

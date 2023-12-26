@@ -1,0 +1,186 @@
+.container {
+  padding: 0px;
+}
+.nav-type {
+  /* border: 2px solid red; */
+}
+.card-body {
+  cursor: pointer;
+  user-select: none;
+  /* border: 2px solid red; */
+}
+.card-body {
+  padding: 0px;
+}
+.ticket-header {
+  /* background: #c2bfd1; */
+  /* border: 2px solid red; */
+  padding: 10px;
+  margin: 0px;
+}
+.priority-marker {
+  height: 20px;
+  width: 20px;
+  /* border: 2px solid gray; */
+  border-radius: 3px;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+.ticket-brief-info {
+  padding: 10px;
+}
+
+.card {
+  min-width: 330px;
+  max-width: 330px;
+  max-height: 266px;
+}
+.card:hover{
+  scale: 1.02;
+  z-index: 1;
+}
+
+.link-item:hover {
+  cursor: pointer;
+  user-select: none;
+  font-size: large;
+}
+
+.nav-link {
+  color: inherit;
+}
+
+.nav-link.active {
+  color: black;
+  font-weight: bold;
+}
+
+.navbar-collapse {
+  justify-content: center;
+}
+.navbar-nav .nav-item {
+  margin: 0 10px;
+}
+.navbar-toggler {
+  order: -1;
+  border-bottom: none;
+}
+
+/* opening card  */
+.modal-body{
+  overflow: auto;
+  max-height: 75vh;
+}
+.edit-card-button {
+  /* width: auto; */
+  /* border: 2px solid red; */
+  /* margin-right: 10px; */
+}
+.edit-card-button:hover {
+  cursor: pointer;
+  user-select: none;
+  scale: 1.7;
+}
+.edit-card-button img {
+  width: 25px;
+}
+.delete-card-button:hover {
+  cursor: pointer;
+  user-select: none;
+  scale: 1.7;
+}
+.delete-card-button img {
+  width: 25px;
+}
+.card-group{
+  /* position: fixed; */
+  overflow-y: auto;
+  height: 70vh;
+}
+.issue h6,
+.issue-raise-persons h6,
+.issue-assigned-persons h6 {
+  padding: 2px;
+  margin-right: 2px;
+}
+@media (max-width: 576px) {
+  .navbar-nav .nav-item {
+    margin: 10px;
+    width: 30%;
+  }
+  .nav-tabs {
+    width: 30%;
+    flex-direction: column;
+    color: #007bff;
+  }
+  .navbar {
+    width: auto;
+  }
+  .raise-ticket-btn {
+  }
+  .nav-type {
+    align-items: start;
+  }
+  .header-left-filter {
+    /* width: auto; */
+  }
+}
+.nav-type {
+  align-items: center;
+}
+.nav-link.active {
+  border-bottom: 2px solid #007bff; /* Change this to your preferred color */
+  color: #007bff; /* Change this to your preferred color */
+}
+.bg-green {
+  background: green;
+}
+.bg-red {
+  background: red;
+}
+.bg-yellow {
+  background: yellow;
+}
+.bg-orange {
+  background: orange;
+}
+
+/* raise ticket model */
+.select2-container .select2-selection--single {
+  height: 34px !important;
+}
+
+.select2-container--default .select2-selection--single {
+  border: 1px solid #ccc !important;
+  border-radius: 0px !important;
+}
+
+.delete_attachments_icon{
+  cursor: pointer;
+  user-select: none;
+  color: blue ;
+}
+.strikethrough {
+  text-decoration: line-through;
+}
+
+#showattachments i.fa-regular:hover{
+  cursor: pointer;
+  color: red;
+}
+
+
+.list-group-item-action:hover{
+  color: #007bff;
+}
+
+/* ticket paramets*/
+.ticket-parameters, .create-ticket-btn{
+  display: none;
+}
+
+span,
+p {
+  /* border: 2px solid red; */
+}
