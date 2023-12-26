@@ -723,7 +723,7 @@ def save_edit_card_details():
 
             elif (
                 content["support_state"] != records[0][2]
-                and content["support_state"] == "Done"
+                and content["support_state"].lower() == "done"
             ):
                 # this query is to update the data in the last row of tracking_table and make it's state 'resolved' and give it a resolution date with a remark
                 update_edited_ticket_query = """
