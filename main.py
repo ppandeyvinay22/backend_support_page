@@ -101,7 +101,13 @@ def get_specific_issue_data_from_db(json_obj):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # 2nd route to fetch all data of any Issue_type
@@ -152,7 +158,14 @@ def get_all_data_from_db():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
+
 
 
 # 3rd route to fetch the data for a particular card
@@ -218,7 +231,13 @@ WHERE
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # 4th route to add a ticket
@@ -312,7 +331,13 @@ def save_raised_ticket():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # 4.1 route to upload images,pdf using support id
@@ -361,7 +386,13 @@ def upload():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # 4.2 view specific images and pdf related to specific attachment
@@ -571,7 +602,13 @@ def delete_attachments_from_db(a_id):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # 4.5 delete individual image and pdf using
@@ -777,7 +814,13 @@ def save_edit_card_details():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # 6th route to get the Head_Institute's name
@@ -879,8 +922,13 @@ def db_get_customer_cities_head_institution_wise_data():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        msg = "Unable to Store the Customer due to Some technical glitches"
-        return False, msg
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # 7th route when somenone clicks on the next before raise ticket modal opening
@@ -935,7 +983,13 @@ def db_save_machine_and_customer_details(json_obj):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # {
@@ -1011,7 +1065,13 @@ def db_deleting_card_information(json_obj):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # 9th route to enter employee details
@@ -1050,7 +1110,13 @@ def db_get_employee_details():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 # 10th route to delete individual attachment
@@ -1085,7 +1151,13 @@ def delete_individual_attachments_from_db(json_obj):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        return False
+        status_code = getattr(error, 'status_code', 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return jsonify(error_message)
 
 
 ticket_data = {
