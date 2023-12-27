@@ -42,11 +42,11 @@ CORS(app)
 conn = psycopg2.pool.SimpleConnectionPool(
     1,
     40,
-    user="postgres",
-    password="vinay121",
-    host="localhost",
+    user="nebulaa",
+    password="nebulaa1234",
+    host="os.nebulaa.in",
     port="5432",
-    database="neodb_development",
+    database="neodb",
 )
 
 
@@ -61,6 +61,7 @@ def get_specific_issue_data():
     # print(content)
     data = get_specific_issue_data_from_db(content)
     return jsonify(data)
+
 
 def get_specific_issue_data_from_db(json_obj):
     msg = None
@@ -101,13 +102,13 @@ def get_specific_issue_data_from_db(json_obj):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # 2nd route to fetch all data of any Issue_type
@@ -158,14 +159,13 @@ def get_all_data_from_db():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
-
+        return error_message
 
 
 # 3rd route to fetch the data for a particular card
@@ -231,13 +231,13 @@ WHERE
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # 4th route to add a ticket
@@ -331,13 +331,13 @@ def save_raised_ticket():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # 4.1 route to upload images,pdf using support id
@@ -386,13 +386,13 @@ def upload():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # 4.2 view specific images and pdf related to specific attachment
@@ -436,30 +436,33 @@ def view_file(file_id):
         # Return an error response
         return jsonify({"error": str(error), "files": []})
 
+
 # to view at front-end
 
-@app.route('/view_attachment_image/<int:file_id>')
+
+@app.route("/view_attachment_image/<int:file_id>")
 def view_attachment_image(file_id):
     # url = 'http://127.0.0.1:5559/view/'+str(file_id)
-    url = 'http://127.0.0.1:5443/view/'+str(file_id)
+    url = "http://127.0.0.1:5443/view/" + str(file_id)
     # print("url", url)
     file = requests.get(url).json()
-    file = file['files'][0]
+    file = file["files"][0]
     # return render_template('view_attachments_image.html',file = file['files'][0] , title = 'View Image Analytics')
     # print(file)
 
     if file:
-        if file["filetype"].lower() == 'pdf':
+        if file["filetype"].lower() == "pdf":
             # file["data"] = base64.b64encode(file["data"].encode('utf-8')).decode('utf-8')
             # print(file)
             # print(type (file["data"]))
-            return render_template('view_attachments_pdf.html', file=file)
+            return render_template("view_attachments_pdf.html", file=file)
         else:
             # file["data"] = base64.b64encode(file["data"].encode('utf-8')).decode('utf-8')
             # print(type (file["data"]))
-            return render_template('view_attachments_image.html', file=file)
+            return render_template("view_attachments_image.html", file=file)
     else:
-        return 'File not found' 
+        return "File not found"
+
 
 # 4.3 view specific images and pdf related to specific suopport_uid
 @app.route("/view", methods=["POST"])
@@ -602,13 +605,13 @@ def delete_attachments_from_db(a_id):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # 4.5 delete individual image and pdf using
@@ -697,7 +700,6 @@ def save_edit_card_details():
             )
             ps_connection.commit()
 
-
             # this query is to get the latest table for the specific support_id from trcking table
             get_new_row_add_data_query = """
                 SELECT id, assign_task, support_state, support_remark, issue_type
@@ -710,10 +712,11 @@ def save_edit_card_details():
                 );
             """
             cur.execute(
-                get_new_row_add_data_query, (content["support_id"], content["support_id"])
+                get_new_row_add_data_query,
+                (content["support_id"], content["support_id"]),
             )
             records = cur.fetchall()
-            print("------> size of ",records)
+            print("------> size of ", records)
 
             if not records:
                 print("Query result is empty.")
@@ -760,7 +763,11 @@ def save_edit_card_details():
                     """
                     cur.execute(
                         update_edited_ticket_query,
-                        (content["support_date"], content["supportRemarks"], records[0][0]),
+                        (
+                            content["support_date"],
+                            content["supportRemarks"],
+                            records[0][0],
+                        ),
                     )
                     ps_connection.commit()
 
@@ -814,13 +821,13 @@ def save_edit_card_details():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # 6th route to get the Head_Institute's name
@@ -922,13 +929,13 @@ def db_get_customer_cities_head_institution_wise_data():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # 7th route when somenone clicks on the next before raise ticket modal opening
@@ -983,13 +990,13 @@ def db_save_machine_and_customer_details(json_obj):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # {
@@ -1065,13 +1072,13 @@ def db_deleting_card_information(json_obj):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # 9th route to enter employee details
@@ -1110,13 +1117,13 @@ def db_get_employee_details():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 # 10th route to delete individual attachment
@@ -1151,13 +1158,13 @@ def delete_individual_attachments_from_db(json_obj):
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, 'status_code', 500)
+        status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
             "message": "An error occurred",
             "error_details": str(error),
         }
-        return jsonify(error_message)
+        return error_message
 
 
 ticket_data = {
@@ -1490,9 +1497,8 @@ def support_page():
         ticket_data=get_customer_cities_head_institution_wise,
     )
 
-
-@app.route("/<issueType>")
-def issue_support_page(issueType):
+    # @app.route("/<issueType>")
+    # def issue_support_page(issueType):
     # print(issueType)
     get_customer_cities_head_institution_wise = requests.get(
         "http://127.0.0.1:5443/get_customer_cities_head_institution_wise_data"

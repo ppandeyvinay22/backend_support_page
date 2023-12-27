@@ -1,229 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Support</title>
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <link
-      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
-    <link rel="stylesheet" href="../static/style/base.css" />
-  </head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
 
-  <body>
-    <div class="container my-3 position-relative">
-      <!-- raise ticket popup -->
-      <div
-        class="alert alert-success position-absolute top-5 end-0 z-2 d-none"
-        id="raise_ticket_alert_success"
-      >
-        <strong>Congratulations!</strong> You ticket saved succesfully.
-      </div>
-      <div
-        class="alert alert-danger position-absolute top-5 end-0 z-2 d-none"
-        id="raise_ticket_alert_danger"
-      >
-        <strong>Yupp!</strong> Server Error Try again.
-      </div>
-      <!-- Header -->
-      <div class="row nav-type text-center d-flex p-3">
-        <div class="col-10 z-0 header-left-filter">
-          <nav class="navbar navbar-expand-lg navbar-light bg-white">
-            <div class="container-fluid">
-              <button
-                class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-              >
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav w-100">
-                  <ul class="nav nav-tabs m-3 w-100">
-                    <li class="nav-item">
-                      <a
-                        class="nav-link nav-all-route"
-                        aria-current="page"
-                        href="/ticket_dashboard"
-                        >ALL</a
-                      >
-                    </li>
-                    <li class="nav-item">
-                      <a
-                        class="nav-link nav-software-route"
-                        aria-current="page"
-                        href="/software"
-                        >Software</a
-                      >
-                    </li>
-                    <li class="nav-item">
-                      <a
-                        class="nav-link nav-data-route"
-                        aria-current="page"
-                        href="/datateam"
-                        >Data</a
-                      >
-                    </li>
-                    <li class="nav-item">
-                      <a
-                        class="nav-link nav-hardware-route"
-                        aria-current="page"
-                        href="/hardware"
-                        >Hardware</a
-                      >
-                    </li>
-                  </ul>
-                </div>
+  <link rel="stylesheet" href="../static/style/base.css" />
+</head>
+
+<body>
+  <div class="container my-3 position-relative">
+    <!-- raise ticket popup -->
+    <div class="alert alert-success position-absolute top-5 end-0 z-2 d-none" id="raise_ticket_alert_success">
+      <strong>Congratulations!</strong> You ticket saved succesfully.
+    </div>
+    <div class="alert alert-danger position-absolute top-5 end-0 z-2 d-none" id="raise_ticket_alert_danger">
+      <strong>Yupp!</strong> Server Error Try again.
+    </div>
+    <!-- Header -->
+    <div class="row nav-type text-center d-flex p-3">
+      <div class="col-10 z-0 header-left-filter">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+              aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+              <div class="navbar-nav w-100">
+                <ul class="nav nav-tabs m-3 w-100">
+                  <li class="nav-item">
+                    <a class="nav-link nav-all-route" id="allButton" aria-current="page" href="#">ALL</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link nav-software-route" id="softwareButton" aria-current="page" href="#">Software</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link nav-data-route" id="dataButton" aria-current="page" href="#">Data</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link nav-hardware-route" id="hardwareButton" aria-current="page" href="#">Hardware</a>
+                  </li>
+                </ul>
               </div>
+              <!-- searchBar  -->
+              <div class="searchbar">
+                <input type="text" class="search-box" placeholder="Search Machine ID..." />
+                <span class="search-icon "></span>
+              </div>
+              <!-- searchBar  -->
             </div>
-          </nav>
-        </div>
-        <div
-          class="col-2 d-flex align-items-center justify-content-end z-1 flex-shrink-1"
-        >
-          <button
-            class="btn btn-primary raise-ticket-btn text-nowrap"
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#raiseticket"
-          >
-            Raise Ticket
-          </button>
-        </div>
+          </div>
+        </nav>
       </div>
+      <div class="col-2 d-flex align-items-center justify-content-end z-1 flex-shrink-1">
+        <button class="btn btn-primary raise-ticket-btn text-nowrap" type="button" data-bs-toggle="modal"
+          data-bs-target="#raiseticket">
+          Raise Ticket
+        </button>
+      </div>
+    </div>
 
-      <!-- card body -->
-      <div class="d-flex bd-highlight m-4">
-        <!-- left card filers  -->
-        <div class="p-2 flex-shrink-1 bd-highlight">
-          <div class="d-flex flex-column bd-highlight mb-3">
-            <div class="p-2 bd-highlight text-nowrap link-item">Pending</div>
-            <div class="p-2 bd-highlight text-nowrap link-item">Ongoing</div>
-            <div class="p-2 bd-highlight text-nowrap link-item">
-              InternetIssue
-            </div>
-            <div class="p-2 bd-highlight text-nowrap link-item">Done</div>
-            <!--
+    <!-- card body -->
+    <div class="d-flex bd-highlight m-4">
+      <!-- left card filers  -->
+      <div class="p-2 flex-shrink-1 bd-highlight">
+        <div class="d-flex flex-column bd-highlight mb-3">
+          <div class="p-2 bd-highlight text-nowrap link-item">Pending</div>
+          <div class="p-2 bd-highlight text-nowrap link-item">Ongoing</div>
+          <div class="p-2 bd-highlight text-nowrap link-item">
+            InternetIssue
+          </div>
+          <div class="p-2 bd-highlight text-nowrap link-item">Done</div>
+          <!--
               <div class="p-2 bd-highlight text-nowrap link-item">Clear All</div>
             -->
-          </div>
-        </div>
-        <!-- right cards div  -->
-        <div class="p-2 w-100 bd-highlight">
-          <div class="card-group">
-            {% for data in fetch_data%}
-            <!-- card -->
-            <div class="card border border-5 m-3 rounded shadow">
-              <!-- card-body -->
-              <div
-                class="card-body"
-                data-bs-toggle="modal"
-                data-bs-target="#cardModal"
-              >
-                <div class="ticket-header">
-                  <div class="ticket-header-part1 position-relative">
-                    <h5 class="card-title d-inline-block fs-3">{{data[10]}}</h5>
-                    <span
-                    class="position-absolute badge {{
-                      'bg-success' if data[4] and data[4].lower() == 'done' else 
-                      ('bg-warning text-dark' if data[4] and data[4].lower() == 'ongoing' else 
-                      ('bg-danger' if data[4] and data[4].lower() == 'pending' else 
-                      ('bg-info text-dark' if data[4] and data[4].lower() == 'internetissue' else '')))
-                  }} top-0 end-0 fs-6" 
-                                 
-                      >{{data[4]}}</span
-                    >
-                  </div>
-                  <!-- Priority tag-->
-                  <div class="ticket-header-part2 position-relative">
-                    {% set lower_data_5 = data[5]|lower %}
-                    <span
-                      class="d-inline-block priority-marker {{'bg-red' if lower_data_5 == 'high' else ('bg-orange' if lower_data_5 == 'moderate' or lower_data_5 == 'medium' else ('bg-yellow' if lower_data_5 == 'low' else 'bg-light')) }}"
-                    ></span>
-                    <h6 class="position-absolute d-inline-block">
-                      {{data[2]}}
-                    </h6>
-                    <span
-                      class="position-absolute top-0 end-0 badge rounded-pill text-bg-dark"
-                      id="ticket_id"
-                      >#{{data[0]}}</span
-                    >
-                  </div>
-                </div>
-                <div class="ticket-brief-info">
-                  <div class="position-relative issue d-flex mb-1">
-                    <h6 class="d-inline-block text-nowrap">ISSUE :</h6>
-                    <p class="card-text d-inline-block issue-desc">
-                      {{data[3]}} ...
-                    </p>
-                  </div>
-                  <div
-                    class="position-relative issue-raise-persons d-flex mb-1"
-                  >
-                    <h6 class="text-nowrap">Raised by:</h6>
-                    <p class="card-text issue-desc">{{data[9]}}</p>
-                  </div>
-                  <div
-                    class="position-relative issue-assigned-persons d-flex mb-1"
-                  >
-                    <h6 class="d-inline-block text-nowrap">Assigned to:</h6>
-                    <p class="card-text d-inline-block issue-desc">
-                      {{data[6]}}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- card-footer -->
-              <div
-                class='card-footer {{"bg-secondary" if data[8] == "offline" else ("bg-success" if data[8] == "online" else "bg-warning")}}  bg-gradient text-light d-flex align-items-center'
-              >
-                <span>{{data[8]}}! </span>
-                <small class="text-light w-100 ps-2"
-                  >Last updated 3 mins ago</small
-                >
-                <div
-                  class="edit-card-button flex-shrink-1 me-1"
-                  data-bs-toggle="modal"
-                  data-bs-target="#editcard"
-                >
-                  <img src="../static/assets/edit_card.png" alt="" />
-                </div>
-                <div
-                  class="delete-card-button flex-shrink-1"
-                >
-                  <img src="../static/assets/trash-bin.png" alt="" />
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
         </div>
       </div>
+      <!-- right cards div  -->
+      <div class="p-2 w-100 bd-highlight">
+        <div class="card-group">
+          ......
+        </div>
+      </div>
+    </div>
+    <div id="paginationContainer"></div>
 
-      <!-- Button trigger modal -->
-      <!--
+    <!-- Button trigger modal -->
+    <!--
 
         <button
         type="button"
@@ -235,295 +106,182 @@
       </button>
     -->
 
-      <!-- card Modal -->
-      <div
-        class="modal fade"
-        id="cardModal"
-        tabindex="-1"
-        aria-labelledby="cardModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="cardModalLabel">Card Modal title</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">...</div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-            </div>
+    <!-- card Modal -->
+    <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cardModalLabel">Card Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">...</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Raise Ticket Modal -->
-      <div
-        class="modal fade bd-example-modal-lg"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        id="raiseticket"
-        tabindex="-1"
-        aria-labelledby="raiseticketLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title" id="raiseticketLabel">Raise ticket</h4>
+    <!-- Raise Ticket Modal -->
+    <div class="modal fade bd-example-modal-lg" data-bs-backdrop="static" data-bs-keyboard="false" id="raiseticket"
+      tabindex="-1" aria-labelledby="raiseticketLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="raiseticketLabel">Raise ticket</h4>
 
-              <button
-                type="button"
-                class="btn-close close-raise-ticket"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <!-- Dropdown -->
-              <div class="container">
-                <div class="row">
-                  <!-- head institution with machine name-->
-                  <!-- head institution-->
-                  <div class="col-md-4">
-                    <label>Head Institution:</label>
-                    <select class="form-select select2" id="institutionSelect">
-                      <option>Select Institution</option>
-                      {% for tdata in ticket_data %}
-                      <option>{{tdata}}</option>
-                      {% endfor %}
+            <button type="button" class="btn-close close-raise-ticket" data-bs-dismiss="modal"
+              aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Dropdown -->
+            <div class="container">
+              <div class="row">
+                <!-- head institution with machine name-->
+                <!-- head institution-->
+                <div class="col-md-4">
+                  <label>Head Institution:</label>
+                  <select class="form-select select2" id="institutionSelect">
+                    <option>Select Institution</option>
+                    {% for tdata in ticket_data %}
+                    <option>{{tdata}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <!-- Location -->
+                <div class="col-md-4">
+                  <label>Location: </label>
+                  <select class="form-select select2" id="SelectLocation" disabled>
+                    <option>Select Location</option>
+                  </select>
+                </div>
+                <!-- Machine No. -->
+                <div class="col-md-4">
+                  <label>Machine No.</label>
+                  <select class="form-select select2" id="SelectMachineNo" disabled>
+                    <option>Select Machine No.</option>
+                  </select>
+                </div>
+                <!-- submit ticket parameters -->
+                <div class="row ticket-parameters mt-3 d-none" id="ticketParameters">
+                  <div class="col-12 mb-3">
+                    <!-- generated by -->
+                    <label for="selectgeneratedby" class="form-label">Generated By:</label>
+                    <select id="selectgeneratedby" class="form-select">
+                      <option selected>Choose...</option>
+                      <option>Ashish</option>
                     </select>
                   </div>
-                  <!-- Location -->
-                  <div class="col-md-4">
-                    <label>Location: </label>
-                    <select
-                      class="form-select select2"
-                      id="SelectLocation"
-                      disabled
-                    >
-                      <option>Select Location</option>
-                    </select>
+                  <!-- attachments -->
+                  <div class="mb-3">
+                    <label for="addattachemnts1" class="form-label w-100">Attachments:</label>
+                    <div class="d-flex gap-1">
+                      <input class="form-control w-100" type="file" id="addattachemnts1" multiple />
+                      <button type="button" class="btn btn-secondary flex-shrink-1" id="submitattachemnts">
+                        Add
+                      </button>
+                    </div>
+                    <div id="showattachments"></div>
                   </div>
-                  <!-- Machine No. -->
-                  <div class="col-md-4">
-                    <label>Machine No.</label>
-                    <select
-                      class="form-select select2"
-                      id="SelectMachineNo"
-                      disabled
-                    >
-                      <option>Select Machine No.</option>
-                    </select>
+                  <!-- error details -->
+                  <div class="mb-3">
+                    <label for="error_detail_desc" class="form-label">Error Details:
+                    </label>
+                    <textarea class="form-control" id="error_detail_desc" rows="3"></textarea>
                   </div>
-                  <!-- submit ticket parameters -->
-                  <div
-                    class="row ticket-parameters mt-3 d-none"
-                    id="ticketParameters"
-                  >
-                    <div class="col-12 mb-3">
-                      <!-- generated by -->
-                      <label for="selectgeneratedby" class="form-label"
-                        >Generated By:</label
-                      >
-                      <select id="selectgeneratedby" class="form-select">
-                        <option selected>Choose...</option>
-                        <option>Ashish</option>
+                  <div class="row">
+                    <!-- issue type -->
+                    <div class="col-sm-4">
+                      <label for="select_issue_type" class="form-label">Issue Type:</label>
+                      <select id="select_issue_type" class="form-select">
+                        <option selected>Software</option>
+                        <option>Hardware</option>
+                        <option>Data</option>
                       </select>
                     </div>
-                    <!-- attachments -->
-                    <div class="mb-3">
-                      <label for="addattachemnts1" class="form-label w-100"
-                        >Attachments:</label
-                      >
-                      <div class="d-flex gap-1">
-                        <input
-                          class="form-control w-100"
-                          type="file"
-                          id="addattachemnts1"
-                          multiple
-                        />
-                        <button
-                          type="button"
-                          class="btn btn-secondary flex-shrink-1"
-                          id="submitattachemnts"
-                        >
-                          Add
-                        </button>
-                      </div>
-                      <div id="showattachments"></div>
+                    <!-- priority -->
+                    <div class="col-sm-4">
+                      <label for="select_priority" class="form-label">Priority:</label>
+                      <select id="select_priority" class="form-select">
+                        <option selected>Choose...</option>
+                        <option>High</option>
+                        <option>Medium</option>
+                        <option>Low</option>
+                      </select>
                     </div>
-                    <!-- error details -->
-                    <div class="mb-3">
-                      <label for="error_detail_desc" class="form-label"
-                        >Error Details:
+                    <!-- commitment days -->
+                    <div class="col-sm-4">
+                      <label for="commitment_days" class="form-label">Commitment days:
                       </label>
-                      <textarea
-                        class="form-control"
-                        id="error_detail_desc"
-                        rows="3"
-                      ></textarea>
-                    </div>
-                    <div class="row">
-                      <!-- issue type -->
-                      <div class="col-sm-4">
-                        <label for="select_issue_type" class="form-label"
-                          >Issue Type:</label
-                        >
-                        <select id="select_issue_type" class="form-select">
-                          <option selected>Software</option>
-                          <option>Hardware</option>
-                          <option>Data</option>
-                        </select>
-                      </div>
-                      <!-- priority -->
-                      <div class="col-sm-4">
-                        <label for="select_priority" class="form-label"
-                          >Priority:</label
-                        >
-                        <select id="select_priority" class="form-select">
-                          <option selected>Choose...</option>
-                          <option>High</option>
-                          <option>Medium</option>
-                          <option>Low</option>
-                        </select>
-                      </div>
-                      <!-- commitment days -->
-                      <div class="col-sm-4">
-                        <label for="commitment_days" class="form-label"
-                          >Commitment days:
-                        </label>
-                        <input
-                          type="number"
-                          id="commitment_days"
-                          name="commitment_days"
-                          class="form-control"
-                          min="0"
-                          max="10"
-                        />
-                      </div>
+                      <input type="number" id="commitment_days" name="commitment_days" class="form-control" min="0"
+                        max="10" />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary close-modal d-none"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" class="btn btn-primary next-ticket-btn">
-                Next
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary back-ticket-btn d-none"
-              >
-                Back
-              </button>
-              <button
-                id="saveTicketBtn"
-                type="button"
-                class="btn btn-primary create-ticket-btn d-none"
-                data-bs-dismiss="modal"
-              >
-                Create Ticket
-              </button>
-            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-modal d-none" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="button" class="btn btn-primary next-ticket-btn">
+              Next
+            </button>
+            <button type="button" class="btn btn-primary back-ticket-btn d-none">
+              Back
+            </button>
+            <button id="saveTicketBtn" type="button" class="btn btn-primary create-ticket-btn d-none"
+              data-bs-dismiss="modal">
+              Create Ticket
+            </button>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Edit Card Modal -->
-      <div
-        class="modal fade"
-        id="editcard"
-        tabindex="-1"
-        aria-labelledby="editcardLabel"
-        aria-hidden="true"
-      >
-        <div
-          class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
-        >
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="editcardLabel">Edit ticket model</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <div class="container row">
-                <!-- pre defined head institution -->
-                <div class="col-4 mb-3">
-                  <label>Head Institution:</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    value="Head Institution here..."
-                    id="edit_modal_head_institution"
-                    aria-label="readonly input example"
-                    disabled
-                    readonly
-                  />
-                </div>
-                <!-- pre defined location -->
-                <div class="col-4 mb-3">
-                  <label>Location:</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    value="Location here..."
-                    id="edit_modal_location"
-                    aria-label="readonly input example"
-                    disabled
-                    readonly
-                  />
-                </div>
-                <!-- pre defined Machine No. -->
-                <div class="col-4 mb-3">
-                  <label>Machine No.</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    value="Machine No. here..."
-                    id="edit_modal_machine_no"
-                    aria-label="readonly input example"
-                    disabled
-                    readonly
-                  />
-                </div>
-                <!-- Assigned task -->
-                <div class="col-4 mb-3">
-                  <label for="editAssignedTask" class="form-label"
-                    >Assigned Task:</label
-                  >
-                  <!-- <input
+    <!-- Edit Card Modal -->
+    <div class="modal fade" id="editcard" tabindex="-1" aria-labelledby="editcardLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editcardLabel">Edit ticket model</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="container row">
+              <!-- pre defined head institution -->
+              <div class="col-4 mb-3">
+                <label>Head Institution:</label>
+                <input class="form-control" type="text" value="Head Institution here..."
+                  id="edit_modal_head_institution" aria-label="readonly input example" disabled readonly />
+              </div>
+              <!-- pre defined location -->
+              <div class="col-4 mb-3">
+                <label>Location:</label>
+                <input class="form-control" type="text" value="Location here..." id="edit_modal_location"
+                  aria-label="readonly input example" disabled readonly />
+              </div>
+              <!-- pre defined Machine No. -->
+              <div class="col-4 mb-3">
+                <label>Machine No.</label>
+                <input class="form-control" type="text" value="Machine No. here..." id="edit_modal_machine_no"
+                  aria-label="readonly input example" disabled readonly />
+              </div>
+              <!-- Assigned task -->
+              <div class="col-4 mb-3">
+                <label for="editAssignedTask" class="form-label">Assigned Task:</label>
+                <!-- <input
                     type="text"
                     class="form-control"
                     id="editAssignedTask"
                     placeholder="Example input placeholder"
                   /> -->
-                  <select id="editAssignedTask" class="form-select">
-                    <!-- <option selected>Choose...</option>
+                <select id="editAssignedTask" class="form-select">
+                  <!-- <option selected>Choose...</option>
                     <option>Anmoldeep</option>
                     <option>Pankaj</option>
                     <option>Santosh</option>
@@ -531,141 +289,102 @@
                     <option>Nishit</option>
                     <option>RipuDaman</option>
                     <option>Ashish</option> -->
-                  </select>
-                </div>
-                <!-- Support Mode -->
-                <div class="col-4 mb-3">
-                  <!-- <input
+                </select>
+              </div>
+              <!-- Support Mode -->
+              <div class="col-4 mb-3">
+                <!-- <input
                     type="text"
                     class="form-control"
                     id="editSupportMode"
                     placeholder="Example input placeholder"
                   /> -->
-                  <label for="editSupportMode" class="form-label"
-                    >Support Mode:</label
-                  >
-                  <select id="editSupportMode" class="form-select">
-                    <!-- <option selected>Choose...</option>
+                <label for="editSupportMode" class="form-label">Support Mode:</label>
+                <select id="editSupportMode" class="form-select">
+                  <!-- <option selected>Choose...</option>
                     <option >online</option>
                     <option>offline</option> -->
-                  </select>
-                </div>
-                <!-- Support State -->
-                <div class="col-4 mb-3">
-                  <label for="editSupportState" class="form-label"
-                  >Support State:</label
-                  >
-                  <select id="editSupportState" class="form-select">
-                    <!-- <option selected>Choose...</option>
+                </select>
+              </div>
+              <!-- Support State -->
+              <div class="col-4 mb-3">
+                <label for="editSupportState" class="form-label">Support State:</label>
+                <select id="editSupportState" class="form-select">
+                  <!-- <option selected>Choose...</option>
                     <option>Pending</option>
                     <option>Ongoing</option>
                     <option>InternetIssue</option>
                     <option>Done</option> -->
-                  </select>
-                  <!-- <input
+                </select>
+                <!-- <input
                     type="text"
                     class="form-control"
                     id="editSupportState"
                     placeholder="Example input placeholder"
                   /> -->
+              </div>
+              <!-- Support Remarks  -->
+              <div class="mb-3">
+                <label for="editSupportRemarks" class="form-label">Support Remarks:
+                </label>
+                <textarea class="form-control" id="editSupportRemarks" rows="3"></textarea>
+              </div>
+              <!-- attachments -->
+              <div class="mb-3">
+                <label for="edit_attachemnts" class="form-label w-100">Attachments:</label>
+                <div class="d-flex gap-1">
+                  <input class="form-control w-100" type="file" id="edit_attachemnts" multiple />
+                  <button type="button" class="btn btn-secondary flex-shrink-1" id="submit_edited_attachemnts">
+                    Add
+                  </button>
                 </div>
-                <!-- Support Remarks  -->
-                <div class="mb-3">
-                  <label for="editSupportRemarks" class="form-label"
-                    >Support Remarks:
-                  </label>
-                  <textarea
-                    class="form-control"
-                    id="editSupportRemarks"
-                    rows="3"
-                  ></textarea>
-                </div>
-                <!-- attachments -->
-                <div class="mb-3">
-                  <label for="edit_attachemnts" class="form-label w-100"
-                    >Attachments:</label
-                  >
-                  <div class="d-flex gap-1">
-                    <input
-                      class="form-control w-100"
-                      type="file"
-                      id="edit_attachemnts"
-                      multiple
-                    />
-                    <button
-                      type="button"
-                      class="btn btn-secondary flex-shrink-1"
-                      id="submit_edited_attachemnts"
-                    >
-                      Add
-                    </button>
-                  </div>
-                  <div id="ShowEditAttachments"></div>
-                </div>
-                <!-- Issue Type  -->
-                <div class="col-sm-4">
-                  <label for="editDepartmentType" class="form-label"
-                    >Issue Type:</label
-                  >
-                  <select id="editDepartmentType" class="form-select">
-                    <!-- <option selected>Software</option>
+                <div id="ShowEditAttachments"></div>
+              </div>
+              <!-- Issue Type  -->
+              <div class="col-sm-4">
+                <label for="editDepartmentType" class="form-label">Issue Type:</label>
+                <select id="editDepartmentType" class="form-select">
+                  <!-- <option selected>Software</option>
                     <option>Hardware</option>
                     <option>Data</option> -->
-                  </select>
-                </div>
-                <!-- Priority  -->
-                <div class="col-sm-4">
-                  <label for="editPriority" class="form-label">Priority:</label>
-                  <select id="editPriority" class="form-select">
-                    <!-- <option selected>Choose...</option>
+                </select>
+              </div>
+              <!-- Priority  -->
+              <div class="col-sm-4">
+                <label for="editPriority" class="form-label">Priority:</label>
+                <select id="editPriority" class="form-select">
+                  <!-- <option selected>Choose...</option>
                     <option>High</option>
                     <option>Medium</option>
                     <option>Low</option> -->
-                  </select>
-                </div>
-                <!-- Commitment days  -->
-                <div class="col-sm-4">
-                  <label for="editCommitmentDays" class="form-label"
-                    >Commitment days:
-                  </label>
-                  <input
-                    type="number"
-                    id="editCommitmentDays"
-                    name="quantity"
-                    class="form-control"
-                    min="0"
-                    max="10"
-                  />
-                </div>
+                </select>
+              </div>
+              <!-- Commitment days  -->
+              <div class="col-sm-4">
+                <label for="editCommitmentDays" class="form-label">Commitment days:
+                </label>
+                <input type="number" id="editCommitmentDays" name="quantity" class="form-control" min="0" max="10" />
               </div>
             </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                id="saveChangesButton"
-              >
-                Save changes
-              </button>
-            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" id="saveChangesButton">
+              Save changes
+            </button>
           </div>
         </div>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-      crossorigin="anonymous"
-    ></script>
-    <script src="../static/js/base.js"></script>
-  </body>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+    crossorigin="anonymous"></script>
+  <script src="../static/js/base.js"></script>
+</body>
+
 </html>
