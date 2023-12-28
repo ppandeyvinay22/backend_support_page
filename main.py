@@ -42,12 +42,15 @@ CORS(app)
 conn = psycopg2.pool.SimpleConnectionPool(
     1,
     40,
-    user="nebulaa",
-    password="nebulaa1234",
-    host="os.nebulaa.in",
+    user="postgres",
+    password="Vinay@121",
+    host="localhost",
     port="5432",
-    database="neodb",
+    database="neodb_development",
 )
+
+if conn:
+    print("connection successful happened...............")
 
 
 # **********Nebulaa support API's to fetch data from db**************
