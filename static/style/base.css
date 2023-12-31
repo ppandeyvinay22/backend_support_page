@@ -53,28 +53,20 @@
 } */
 
 .searchbar {
-  margin: 5px;
-  padding: 0px 5px;
-  width: 20%;
-  height: 35px;
-  border: 2px solid #ced4da;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-right: 50px !important;
 }
 
 .search-box {
-  margin-top: 2px;
-  padding-top: 2px;
-  border: none;
-  font-size: 13px;
-  outline: none;
+  padding-left: 10px;
+  border: 2px solid #919394;
+  border-radius: 6px;
+  /* border: none; */
+  font-size: 15px;
+  /* outline: none; */
 }
 
-.search-icon {
-  font-size: 1.2rem;
-  opacity: 0.7;
-  width: 20px;
-  height: 20px;
+.bold {
+  font-weight: bold;
 }
 
 #resultDropdown {

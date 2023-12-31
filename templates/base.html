@@ -26,7 +26,7 @@
     </div>
     <!-- Header -->
     <div class="row nav-type text-center d-flex p-3">
-      <div class="col-10 z-0 header-left-filter">
+      <div class="col-7 z-0 header-left-filter">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
           <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
@@ -50,17 +50,17 @@
                   </li>
                 </ul>
               </div>
-              <!-- searchBar  -->
-              <div class="searchbar">
-                <input type="text" class="search-box" placeholder="Search By name or Machine ID..." />
-                <span class="search-icon "></span>
-              </div>
-              <!-- searchBar  -->
             </div>
           </div>
         </nav>
       </div>
-      <div class="col-2 d-flex align-items-center justify-content-end z-1 flex-shrink-1">
+      <div class="col-5 d-flex align-items-center justify-content-end z-1 flex-shrink-1">
+        <!-- searchBar  -->
+        <div class="searchbar">
+          <input type="text" class="search-box" placeholder="Search Machine ID..." />
+          <span class="search-icon "></span>
+        </div>
+        <!-- searchBar  -->
         <button class="btn btn-primary raise-ticket-btn text-nowrap" type="button" data-bs-toggle="modal"
           data-bs-target="#raiseticket">
           Raise Ticket
@@ -73,12 +73,12 @@
       <!-- left card filers  -->
       <div class="p-2 flex-shrink-1 bd-highlight">
         <div class="d-flex flex-column bd-highlight mb-3">
-          <div class="p-2 bd-highlight text-nowrap link-item" id="pending">Pending</div>
-          <div class="p-2 bd-highlight text-nowrap link-item" id="ongoing">Ongoing</div>
-          <div class="p-2 bd-highlight text-nowrap link-item" id="internetissue">
+          <div class="p-2 bd-highlight text-nowrap link-item" id="pendingButton">Pending</div>
+          <div class="p-2 bd-highlight text-nowrap link-item" id="ongoingButton">Ongoing</div>
+          <div class="p-2 bd-highlight text-nowrap link-item" id="internetissueButton">
             InternetIssue
           </div>
-          <div class="p-2 bd-highlight text-nowrap link-item" id="done">Done</div>
+          <div class="p-2 bd-highlight text-nowrap link-item" id="doneButton">Done</div>
           <!--
               <div class="p-2 bd-highlight text-nowrap link-item">Clear All</div>
             -->
@@ -210,7 +210,7 @@
                       <select id="select_issue_type" class="form-select">
                         <option selected>Software</option>
                         <option>Hardware</option>
-                        <option>Data</option>
+                        <option>Datateam</option>
                       </select>
                     </div>
                     <!-- priority -->
@@ -274,7 +274,7 @@
                   <h6>Locations: <span id="edit_modal_location"></span></h6>
                 </div>
                 <div>
-                  <h6>Machine No: <span id="edit_modal_machine_no"></span> </h6>
+                  <h6>Machines: <span id="edit_modal_machine_no"></span> </h6>
                 </div>
               </div>
 

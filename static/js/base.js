@@ -32,9 +32,10 @@ document.addEventListener("DOMContentLoaded", function () {
     nav_hardware_route[0].classList.add("active");
   } else if (url_end_point === "software") {
     nav_software_route[0].classList.add("active");
-  } else {
-    nav_all_route[0].classList.add("active");
   }
+  // else {
+  //   nav_all_route[0].classList.add("active");
+  // }
 
 
   // navLinks.forEach(function (link) {
@@ -52,6 +53,61 @@ document.addEventListener("DOMContentLoaded", function () {
   //     this.classList.add("active");
   //   });
   // });
+
+  // handle button clicks and apply bold font
+  const buttons = document.querySelectorAll('.nav-link');
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Check if the clicked button is the "All" button
+      const isAllButton = button.id === 'allButton';
+
+      // Remove bold class from all buttons
+      buttons.forEach(btn => {
+        if (isAllButton && btn !== button) {
+          btn.classList.remove('bold');
+        } else if (!isAllButton) {
+          btn.classList.remove('bold');
+        }
+      });
+
+      // Add bold class to the clicked button
+      button.classList.add('bold');
+    });
+  });
+
+  const statusButtons = document.querySelectorAll('.link-item');
+
+  statusButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove bold class from all buttons
+      statusButtons.forEach(btn => btn.classList.remove('bold'));
+
+      // Add bold class to the clicked button
+      button.classList.add('bold');
+    });
+  });
+
+  const buttonsFinal = document.querySelectorAll('.nav-link, .link-item');
+
+  buttonsFinal.forEach(button => {
+    button.addEventListener('click', () => {
+      // Check if the clicked button is the "All" button
+      const isAllButton = button.id === 'allButton';
+
+      // Remove bold class from all buttons
+      if (isAllButton) {
+        buttonsFinal.forEach(btn => {
+          btn.classList.remove('bold');
+        });
+
+        // Add bold class to the clicked button
+        button.classList.add('bold');
+      }
+    });
+  });
+
+
 
 
   //*********** Pagination starts **********/
@@ -331,7 +387,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "Choose...",
       "Software",
       "Hardware",
-      "Data",
+      "Datateam",
     ];
 
     let editDepartmentTypeHTML = "";
@@ -549,7 +605,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ********** delete attachments function ********
-  async function display_attachments(t_id, ShowAttachmentDiv) {
+  async function display_attachments(t_id, ShowAttachmentDiv, showDeleteBtn) {
     // fetch data
 
     await fetch(url + "/view", {
@@ -567,10 +623,12 @@ document.addEventListener("DOMContentLoaded", function () {
           // appending files of support id from database
           // const delete_attachment_file = `http://127.0.0.1:5559/delete_attachment/${file['id']}`;
           let DisplayattachInnerLi = `<li data-key="${file["id"]}">
-               <a href="${url + "/view_attachment_image/" + file["id"]
+              <a href="${url + "/view_attachment_image/" + file["id"]
             }" class="list-group-item list-group-item-action d-inline me-2" target="_blank">${file["filename"]
-            }</a><span class="delete_attachments_icon d-inline fs-5 fw-medium" >x</span>
-               </li>`;
+            }</a>${showDeleteBtn
+              ? '<span class="delete_attachments_icon d-inline fs-5 fw-medium" >x</span></li>'
+              : ""
+            }`;
           displayattach += DisplayattachInnerLi;
         });
 
@@ -593,7 +651,7 @@ document.addEventListener("DOMContentLoaded", function () {
               "/delete_attachment/" +
               this.parentNode.getAttribute("data-key"),
               {
-                methord: "GET",
+                method: "GET",
               }
             )
               .then((res) => {
@@ -619,6 +677,50 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         });
       });
+
+    // we will put this in above then code when data is feched from the url
+    // console.log("show_edit_attachment", t_id);
+    // let displayattach = `<ul class="mt-2 border border-top-0 border border-3 rounded-4">`;
+    // let DisplayattachInnerLi = `<li data-key="10">
+    //   <a href="#" class="list-group-item list-group-item-action d-inline me-2" target="_blank">filename</a><span class="delete_attachments_icon d-inline fs-5 fw-medium" >x</span>
+    //   </li>`;
+    // displayattach += DisplayattachInnerLi;
+    // DisplayattachInnerLi += `<li data-key="10">
+    //   <a href="#" class="list-group-item list-group-item-action d-inline me-2" target="_blank">filename</a><span class="delete_attachments_icon d-inline fs-5 fw-medium" >x</span>
+    //   </li>`;
+    // displayattach += DisplayattachInnerLi;
+
+    // displayattach += `</ul>`;
+    // ShowAttachmentDiv.innerHTML = displayattach;
+
+    // // delete attachments
+    // delete_attachments = Array.from(
+    //   document.querySelectorAll(".delete_attachments_icon")
+    // );
+    // delete_attachments.forEach((delete_item) => {
+    //   delete_item.style.cursor = "pointer";
+    //   delete_item.style.userSelect = "none";
+    //   delete_item.addEventListener("click", () => {
+    //     console.log("working");
+    //     delete_item.parentNode.style.display = "none";
+    //   });
+    //   delete_item.addEventListener("mouseover", () => {
+    //     delete_item.style.color = "red";
+    //     delete_item.parentNode.childNodes[1].style.textDecoration =
+    //       "line-through";
+    //     // const listItem = delete_attachments.parentNode;
+    //     // const link = listItem.querySelector('a');
+    //     // link.style.innerHTML = link.style.innerHTML.strike();
+    //     // link.classList.add("strikethrough");
+    //   });
+    //   delete_item.addEventListener("mouseout", () => {
+    //     delete_item.style.color = "gray";
+    //     delete_item.parentNode.childNodes[1].style.textDecoration = "none";
+    //     // delete_item.parentNode.style.innerHTML = delete_item.parentNode.style.innerHTML.strike()
+    //     // link.classList.remove('strikethrough');
+    //   });
+    // });
+    // console.log(delete_attachments);
   }
 
   // ****** search machine and name filter ******
@@ -1054,7 +1156,7 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
           </div>
           <div class="col-md-4">
-              <label for="inputEmail4" class="form-label fw-bold">Machine Numbers</label>
+              <label for="inputEmail4" class="form-label fw-bold">Machines</label>
               <div class="form-control read-only-box bg-light" readonly>
                   <!-- Your read-only content goes here -->
                   ${data[0][24]}
@@ -1157,7 +1259,8 @@ document.addEventListener("DOMContentLoaded", function () {
             //   return data;
             display_attachments(
               data[0][0],
-              document.querySelector("#showattachments2")
+              document.querySelector("#showattachments2"),
+              false
             );
           })
           .catch((err) => console.log("err", err));
@@ -1196,7 +1299,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Handle errors or display an error message to the user
           });
 
-        display_attachments(edit_id, ShowEditAttachments);
+        display_attachments(edit_id, ShowEditAttachments, true);
 
         document
           .getElementById("saveChangesButton")
@@ -1207,14 +1310,34 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log('working');
           });
 
-        // add attachments
-        const submitattachemnts = document.getElementById(
-          "submit_edited_attachemnts"
-        );
+        // add attachments in edit
+        const submitattachemnts = document.getElementById("submit_edited_attachemnts");
         submitattachemnts.addEventListener("click", async function () {
-          // console.log("working");
+          console.log("working edit btn");
+          // add attachments
+          const formData = new FormData();
+          const editattachments = document.getElementById("edit_attachemnts").files;
+
+          for (const file of editattachments) {
+            formData.append("files", file);
+          }
+          formData.append("support_id", edit_id);
+          await fetch(url + "/upload_files", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => {
+              // Handle the response here
+              return response.json();
+            })
+            .then(async (data) => {
+              console.log("Success:", data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
           // fetch and display
-          display_attachments(edit_id, ShowEditAttachments);
+          display_attachments(edit_id, ShowEditAttachments, true);
         });
       });
 
@@ -1241,11 +1364,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
 
-
       cardContainer.appendChild(cardElement);
     });
   }
 
+  // ******* updated pagination buttons ******** //
   function updatePaginationButtons(currentPage, totalPages) {
     const paginationContainer = document.getElementById('paginationContainer');
     paginationContainer.innerHTML = '';
@@ -1272,6 +1395,7 @@ document.addEventListener("DOMContentLoaded", function () {
     paginationContainer.appendChild(nextButton);
   }
 
+  // ******* created pagination buttons ******** //
   function createPaginationButton(text, onClick) {
     const button = document.createElement('button');
     button.textContent = text;
@@ -1279,76 +1403,158 @@ document.addEventListener("DOMContentLoaded", function () {
     return button;
   }
 
+  // ******* total pages in pagination ******** //
   function calculateTotalPages() {
     return Math.ceil(filteredData.length / cardsPerPage);
   }
 
   //********   filters *******/
   // Add event listeners to All
-  document.getElementById('allButton').addEventListener('click', () => {
-    console.log("clickedAll")
-    filteredData = originalData;
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  });
+  // document.getElementById('allButton').addEventListener('click', () => {
+  //   console.log("clickedAll")
+  //   filteredData = originalData;
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
 
   // Add event listeners to hardware
-  document.getElementById('hardwareButton').addEventListener('click', () => {
-    console.log("clickedhardware")
-    filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'hardware');
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  });
+  // document.getElementById('hardwareButton').addEventListener('click', () => {
+  //   console.log("clickedhardware")
+  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'hardware');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
 
   // Add event listeners to software
-  document.getElementById('softwareButton').addEventListener('click', () => {
-    console.log("clickedsoftware")
-    filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'software');
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  });
+  // document.getElementById('softwareButton').addEventListener('click', () => {
+  //   console.log("clickedsoftware")
+  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'software');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
   // Add event listeners to data
-  document.getElementById('dataButton').addEventListener('click', () => {
-    console.log("clickedata")
-    filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'datateam');
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  });
+  // document.getElementById('dataButton').addEventListener('click', () => {
+  //   console.log("clickedata")
+  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'datateam');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
 
   // Add event listeners to pending
-  document.getElementById('pending').addEventListener('click', () => {
-    console.log("clickedpending")
-    filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'pending');
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  });
+  // document.getElementById('pendingButton').addEventListener('click', () => {
+  //   console.log("clickedpending")
+  //   filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'pending');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
 
   // Add event listeners to ongoing
-  document.getElementById('ongoing').addEventListener('click', () => {
-    console.log("clickedOngoing")
-    filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'ongoing');
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  });
+  // document.getElementById('ongoingButton').addEventListener('click', () => {
+  //   console.log("clickedOngoing")
+  //   filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'ongoing');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
 
   // Add event listeners to internetissue
-  document.getElementById('internetissue').addEventListener('click', () => {
-    console.log("clickedInternetIssue")
-    filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'internetissue');
+  // document.getElementById('internetissueButton').addEventListener('click', () => {
+  //   console.log("clickedInternetIssue")
+  //   filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'internetissue');
 
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  });
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
 
   // Add event listeners to done state
-  document.getElementById('done').addEventListener('click', () => {
-    console.log("clickedone")
-    filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'done');
+  // document.getElementById('doneButton').addEventListener('click', () => {
+  //   console.log("clickedone")
+  //   filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'done');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
+
+  let activeFilters = []; // Initialize an array to store active filters
+
+  // Function to apply filters and update display
+  function applyFilters() {
+    if (activeFilters.length === 0) {
+      // If no filters selected, show all data
+      filteredData = originalData;
+    } else {
+      // Apply filters based on the activeFilters array
+      filteredData = originalData.filter(data =>
+        activeFilters.every(filter =>
+          filter === 'hardware' || filter === 'software' || filter === 'datateam'
+            ? data[2] !== null && data[2].toLowerCase() === filter
+            : data[4] !== null && data[4].toLowerCase() === filter
+        )
+      );
+    }
+
+    // Update display
     displayPage(1);
     updatePaginationButtons(1, calculateTotalPages());
+  }
+
+  // Event listeners for filter buttons
+  document.getElementById('allButton').addEventListener('click', () => {
+    console.log("clickedAll");
+    activeFilters = [];
+    applyFilters();
   });
 
+  document.getElementById('hardwareButton').addEventListener('click', () => {
+    console.log("clickedhardware");
+    toggleFilter('hardware');
+  });
+
+  document.getElementById('softwareButton').addEventListener('click', () => {
+    console.log("clickedsoftware");
+    toggleFilter('software');
+  });
+
+  document.getElementById('dataButton').addEventListener('click', () => {
+    console.log("clickedata");
+    toggleFilter('datateam');
+  });
+
+  document.getElementById('pendingButton').addEventListener('click', () => {
+    console.log("clickedpending");
+    toggleFilter('pending');
+  });
+
+  document.getElementById('ongoingButton').addEventListener('click', () => {
+    console.log("clickedOngoing");
+    toggleFilter('ongoing');
+  });
+
+  document.getElementById('internetissueButton').addEventListener('click', () => {
+    console.log("clickedInternetIssue");
+    toggleFilter('internetissue');
+  });
+
+  document.getElementById('doneButton').addEventListener('click', () => {
+    console.log("clickedone");
+    toggleFilter('done');
+  });
+
+  // Function to toggle filter in the array
+  function toggleFilter(filter) {
+    const index = activeFilters.indexOf(filter);
+    if (index === -1) {
+      // Add filter if not present
+      activeFilters.push(filter);
+    } else {
+      // Remove filter if already present
+      activeFilters.splice(index, 1);
+    }
+    applyFilters();
+  }
+
+
   //****pagination ends here ************/
+
+
 
   //******** search box in create ticket filter **********/
   document.getElementById("searchInput").addEventListener("input", function () {
