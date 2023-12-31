@@ -49,9 +49,6 @@ conn = psycopg2.pool.SimpleConnectionPool(
     database="neodb_development",
 )
 
-if conn:
-    print("connection successful happened...............")
-
 
 # **********Nebulaa support API's to fetch data from db**************
 
@@ -75,32 +72,43 @@ def get_specific_issue_data_from_db(json_obj):
             # print(json_obj['issue_type'])
             cur = ps_connection.cursor()
             get_all_data_query = """ 
-                SELECT 
-                s.id, 
-                s.support_date, 
-                s.Issue_type, 
-                s.error_detail, 
-                s.support_state, 
-                s.support_priority, 
-                s.assign_task,
-                s.generated_by,
-                s.support_mode,
-                s.resolved_by,
-                m.code
-                FROM 
-                Support s
-                INNER JOIN 
-                Machine m ON s.machine_id = m.id
-                WHERE 
+                select s.id,
+            s.support_date,
+            s.Issue_type,
+            s.error_detail,
+            s.support_state,
+            s.support_priority,
+            s.assign_task,
+            s.generated_by,
+            s.support_mode,
+            s.resolved_by,
+            array_agg(c.head_instituition),
+			array_agg(c.instituition_name),
+			array_agg(c.instituition_code)
+			
+            FROM
+                support s
+            LEFT JOIN
+                machine_customer_info m_c
+				    ON m_c.support_id = s.id
+			LEFT JOIN
+                customer c 
+				    ON m_c.customer_id = c.id
+            where
                 s.Issue_type = %s
-                ORDER BY 
-                s.id DESC; 
+            GROUP BY 
+                s.id
+            ORDER BY
+                s.id DESC
+            ;
             """
             cur.execute(get_all_data_query, [json_obj["Issue_type"]])
             records = cur.fetchall()
-            cur.close()
 
-        conn.putconn(ps_connection)
+            print("records here printed:- ", records[0], records[1])
+
+            cur.close()
+        # conn.putconn(ps_connection)
         return records
 
     except (Exception, psycopg2.DatabaseError) as error:
@@ -112,6 +120,13 @@ def get_specific_issue_data_from_db(json_obj):
             "error_details": str(error),
         }
         return error_message
+
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 2nd route to fetch all data of any Issue_type
@@ -130,34 +145,42 @@ def get_all_data_from_db():
             cur = ps_connection.cursor()
             query_start_time = time.time()
             get_all_data_query = """ 
-            SELECT 
-            s.id, 
-            s.support_date, 
-            s.Issue_type, 
-            s.error_detail, 
-            s.support_state, 
-            s.support_priority, 
-            s.assign_task,
-            s.generated_by,
-            s.support_mode,
-            s.resolved_by,
-            m.code
-            FROM 
-            Support s
-            INNER JOIN 
-            Machine m ON s.machine_id = m.id
-            ORDER BY 
-            s.id DESC; 
+            select s.id,
+                s.support_date,
+                s.Issue_type,
+                s.error_detail,
+                s.support_state,
+                s.support_priority,
+                s.assign_task,
+                s.generated_by,
+                s.support_mode,
+                s.resolved_by,
+                array_agg(c.head_instituition),
+                array_agg(c.instituition_name),
+                array_agg(c.instituition_code)
+			
+            FROM
+            support s
+            LEFT JOIN
+                machine_customer_info m_c
+				    ON m_c.support_id = s.id
+			LEFT JOIN
+                customer c 
+				    ON m_c.customer_id = c.id
+            GROUP BY s.id
+            ORDER BY
+                s.id DESC
+            ;
             """
             # support mode, "Raised by whome" , "machinestatus"
             cur.execute(get_all_data_query)
 
             records = cur.fetchall()
-            print("records here printed:- ", records[0], records[1])
+            # print("records here printed:- ", records[0], records[1])
 
             cur.close()
 
-        conn.putconn(ps_connection)
+        # conn.putconn(ps_connection)
         return records
 
     except (Exception, psycopg2.DatabaseError) as error:
@@ -169,6 +192,13 @@ def get_all_data_from_db():
             "error_details": str(error),
         }
         return error_message
+
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 3rd route to fetch the data for a particular card
@@ -190,47 +220,68 @@ def get_individual_card_data_from_db(json_obj):
         if ps_connection:
             cur = ps_connection.cursor()
 
+            # This query is to get individual data for tickets from support table
             get_all_data_query = """  
                 SELECT 
-    s.id, 
-    s.support_date, 
-    s.generated_by, 
-    s.support_mode, 
-    s.support_priority, 
-    s.support_commitment_days, 
-    s.issue_type, 
-    s.support_state, 
-    s.assign_task, 
-    s.support_remark, 
-    s.error_detail, 
-    s.resolved_by, 
-    s.resolution_detail, 
-    s.resolution_date, 
-    s.visit_required, 
-    s.visit_start_date, 
-    s.visit_end_date, 
-    s.expense, 
-    s.h1_replace, 
-    s.h2_replace, 
-    s.h3_replace, 
-    s.h4_replace, 
-    c.head_instituition, 
-    c.instituition_name, 
-    c.instituition_code
-FROM 
-    Support s
-INNER JOIN 
-    Customer c ON s.cusotmer_id = c.id
-WHERE 
-    s.id = %s;
+                    s.id, 
+                    s.support_date, 
+                    s.generated_by, 
+                    s.support_mode, 
+                    s.support_priority, 
+                    s.support_commitment_days, 
+                    s.issue_type, 
+                    s.support_state, 
+                    s.assign_task, 
+                    s.support_remark, 
+                    s.error_detail, 
+                    s.resolved_by, 
+                    s.resolution_detail, 
+                    s.resolution_date, 
+                    s.visit_required, 
+                    s.visit_start_date, 
+                    s.visit_end_date, 
+                    s.expense, 
+                    s.h1_replace, 
+                    s.h2_replace, 
+                    s.h3_replace, 
+                    s.h4_replace, 
+                    array_agg(c.head_instituition),
+                    array_agg(c.instituition_name),
+                    array_agg(c.instituition_code)
+                FROM 
+                    Support s
+                LEFT JOIN
+                    machine_customer_info m_c
+				        ON m_c.support_id = s.id
+                LEFT JOIN
+                    customer c 
+				        ON m_c.customer_id = c.id
+                WHERE 
+                    s.id = %s
+                GROUP BY 
+                    s.id
+                ;
             """
+
             cur.execute(get_all_data_query, [json_obj["id"]])
-            records = cur.fetchall()
-            # print(records[0])
+            records1 = cur.fetchall()
+            # print(records1[0])
+
+            # This query is to get individual data for tickets from tracking_table
+            get_individual_data_from_tracking_table_query = """
+            SELECT * from tracking_table where support_id = %s
+            """
+            cur.execute(get_individual_data_from_tracking_table_query, [json_obj["id"]])
+            records2 = cur.fetchall()
+            # print("**********************", records2)
+
+            support_list.append(records1[0])
+            support_list.append(records2)
+
             cur.close()
 
-        conn.putconn(ps_connection)
-        return records
+        # conn.putconn(ps_connection)
+        return support_list
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
@@ -241,11 +292,15 @@ WHERE
             "error_details": str(error),
         }
         return error_message
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 4th route to add a ticket
-
-
 @app.route("/save_raised_ticket", methods=["POST"])
 @cross_origin(allow_headers=["Content-Type", "multipart/form-data"])
 def save_raised_ticket():
@@ -269,14 +324,14 @@ def save_raised_ticket():
         if ps_connection:
             cur = ps_connection.cursor()
 
-            # this query is to get machine_id and cusotmer_id from support_id taht will be provided as json data
-            get_customer_and_machine_id_query = """
-            SELECT machine_id, cusotmer_id  from SUPPORT
-            WHERE id = %s
-            """
-            cur.execute(get_customer_and_machine_id_query, [content["support_id"]])
-            results = cur.fetchall()
-            print(results)
+            # this query is to get machine_id and cusotmer_id from support_id that will be provided as json data
+            # get_customer_and_machine_id_query = """
+            # SELECT machine_id, cusotmer_id  from SUPPORT
+            # WHERE id = %s
+            # """
+            # cur.execute(get_customer_and_machine_id_query, [content["support_id"]])
+            # results = cur.fetchall()
+            # print(results)
 
             # this query is to save the data in support table
             save_raised_ticket_query1 = """  
@@ -329,11 +384,11 @@ def save_raised_ticket():
 
             cur.close()
 
-        conn.putconn(ps_connection)
+        # conn.putconn(ps_connection)
         return jsonify({"message": "Ticket saved successfully"}), 200
 
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        # print(error)
         status_code = getattr(error, "status_code", 500)
         error_message = {
             "status_code": status_code,
@@ -341,6 +396,12 @@ def save_raised_ticket():
             "error_details": str(error),
         }
         return error_message
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 4.1 route to upload images,pdf using support id
@@ -359,7 +420,7 @@ def allowed_file(filename):
 @cross_origin(allow_headers=["Content-Type", "multipart/form-data"])
 def upload():
     content = request.form.get("support_id")
-    print(content)
+    # print(content)
     try:
         ps_connection = conn.getconn()
         if ps_connection:
@@ -367,7 +428,7 @@ def upload():
 
             if "files" in request.files:
                 files = request.files.getlist("files")
-                print(content, files)
+                # print(content, files)
                 save_raised_ticket_attachments_query2 = """
                     INSERT INTO attachment
                     ( filename, filetype, data, support_id)
@@ -384,18 +445,21 @@ def upload():
                             (filename, file_type, file_data, (content)),
                         )
             ps_connection.commit()
-        conn.putconn(ps_connection)
+
+            cur.close()
+
+        # conn.putconn(ps_connection)
         return jsonify({"message": "Ticket saved successfully"}), 200
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, "status_code", 500)
-        error_message = {
-            "status_code": status_code,
-            "message": "An error occurred",
-            "error_details": str(error),
-        }
-        return error_message
+        return False
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 4.2 view specific images and pdf related to specific attachment
@@ -411,7 +475,7 @@ def view_file(file_id):
         """
             cur.execute(get_all_attachemnts, [file_id])
             files = cur.fetchall()
-            print(files)
+            # print(files)
             if files:
                 # if file.filetype.lower() == 'pdf':
                 #     file.data = base64.b64encode(file.data).decode('utf-8')
@@ -430,19 +494,29 @@ def view_file(file_id):
                     for file in files
                 ]
 
+                cur.close()
                 return jsonify({"files": files_json})
 
             else:
+                cur.close()
                 return "File not found"
+
+        # conn.putconn(ps_connection)
+        return jsonify({"message": "Files fetched successfully"}), 200
+
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         # Return an error response
         return jsonify({"error": str(error), "files": []})
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # to view at front-end
-
-
 @app.route("/view_attachment_image/<int:file_id>")
 def view_attachment_image(file_id):
     # url = 'http://127.0.0.1:5559/view/'+str(file_id)
@@ -474,9 +548,10 @@ def view_file_with_specific_support_id():
     try:
         ps_connection = conn.getconn()
         content = request.get_json(force=True)
-        print("content -->", content)
+        # print("content -->", content)
         if ps_connection:
             cur = ps_connection.cursor()
+
             get_all_attachemnts = """
         SELECT id,filename,filetype from attachment where support_id = %s
         """
@@ -496,14 +571,26 @@ def view_file_with_specific_support_id():
                     for file in files
                 ]
 
+                cur.close()
                 return jsonify({"files": files_json})
 
             else:
+                cur.close()
                 return "File not found"
+
+        # conn.putconn(ps_connection)
+        return jsonify({"message": "Files fetched successfully"}), 200
+
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         # Return an error response
         return jsonify({"error": str(error), "files": []})
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 4.4 view all the images and pdf related to specific support id
@@ -520,7 +607,7 @@ SELECT * from attachment order by id ASC
 """
             cur.execute(get_all_attachemnts)
             files = cur.fetchall()
-            print(files)
+            # print(files)
             cur.close()
 
         conn.putconn(ps_connection)
@@ -542,6 +629,12 @@ SELECT * from attachment order by id ASC
         print(error)
         # Return an error response
         return jsonify({"error": str(error), "files": []})
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 4.5 delete specific image and pdf using id
@@ -568,12 +661,18 @@ def delete_attachments_from_db(json_obj):
             ps_connection.commit()
             cur.close()
 
-        conn.putconn(ps_connection)
+        # conn.putconn(ps_connection)
         return ({"message": "Ticket saved successfully"}), 200
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return False
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 4.5 delete specific image and pdf using
@@ -584,7 +683,7 @@ def delete_attachments_from_db(json_obj):
 def delete_attachment(attachment_id):
     # content = request.get_json(force=True)
     data = delete_attachments_from_db(attachment_id)
-    print(attachment_id, type(attachment_id))
+    # print(attachment_id, type(attachment_id))
     return jsonify(data)
 
 
@@ -603,18 +702,18 @@ def delete_attachments_from_db(a_id):
             ps_connection.commit()
             cur.close()
 
-        conn.putconn(ps_connection)
+        # conn.putconn(ps_connection)
         return ({"message": "Ticket saved successfully"}), 200
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        status_code = getattr(error, "status_code", 500)
-        error_message = {
-            "status_code": status_code,
-            "message": "An error occurred",
-            "error_details": str(error),
-        }
-        return error_message
+        return False
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 4.5 delete individual image and pdf using
@@ -653,8 +752,6 @@ def delete_attachments_from_db(a_id):
 
 
 # 5th route to edit a ticket
-
-
 @app.route("/save_edit_card_details", methods=["POST"])
 @cross_origin()
 def save_edit_card_details():
@@ -664,44 +761,61 @@ def save_edit_card_details():
         if ps_connection:
             cur = ps_connection.cursor()
 
-            # these informations I got from the form, so I will only update them
-            # assign_task = "vinay"
-            # support_priority = "high"
-            # support_commitment_days = "3"
-            # issue_type = "hardware"
-            # support_date = "25-08-2023"
-            # support_remark = "Finally done"
-            # support_state = "resolved"
-            # support_mode = "online"
+            if content["support_state"].lower() == "done":
+                print("done part run after the contnent recieved:**********")
+                # this query is to update the edit card details in support table when support_state is done
+                save_raised_ticket_query1 = """
+                    UPDATE SUPPORT
+                    SET
+                        support_state = %s,
+                        resolved_by = %s,
+                        resolution_detail = %s,
+                        resolution_date = %s,
+                        support_mode = %s
+                    WHERE id = %s;
+                """
 
-            # this query is to update the edit card details in support table
-            save_raised_ticket_query1 = """
-                UPDATE SUPPORT
-                SET
-                    assign_task = %s,
-                    support_priority = %s,
-                    support_commitment_days = %s,
-                    Issue_type = %s,
-                    support_remark = %s,
-                    support_state = %s,
-                    support_mode = %s
-                WHERE id = %s;
-            """
+                cur.execute(
+                    save_raised_ticket_query1,
+                    (
+                        content["support_state"],
+                        content["resolved_by"],
+                        content["resolution_detail"],
+                        content["resolution_date"],
+                        content["support_mode"],
+                        content["support_id"],
+                    ),
+                )
+                ps_connection.commit()
+            else:
+                # this query is to update the edit card details in support table when support_state is not done
+                save_raised_ticket_query1 = """
+                    UPDATE SUPPORT
+                    SET
+                        assign_task = %s,
+                        support_priority = %s,
+                        support_commitment_days = %s,
+                        Issue_type = %s,
+                        support_remark = %s,
+                        support_state = %s,
+                        support_mode = %s
+                    WHERE id = %s;
+                """
 
-            cur.execute(
-                save_raised_ticket_query1,
-                (
-                    content["assign_task"],
-                    content["priority"],
-                    content["commitmentDays"],
-                    content["issueType"],
-                    content["supportRemarks"],
-                    content["support_state"],
-                    content["support_mode"],
-                    content["support_id"],
-                ),
-            )
-            ps_connection.commit()
+                cur.execute(
+                    save_raised_ticket_query1,
+                    (
+                        content["assign_task"],
+                        content["priority"],
+                        content["commitmentDays"],
+                        content["issueType"],
+                        content["supportRemarks"],
+                        content["support_state"],
+                        content["support_mode"],
+                        content["support_id"],
+                    ),
+                )
+                ps_connection.commit()
 
             # this query is to get the latest table for the specific support_id from trcking table
             get_new_row_add_data_query = """
@@ -719,7 +833,7 @@ def save_edit_card_details():
                 (content["support_id"], content["support_id"]),
             )
             records = cur.fetchall()
-            print("------> size of ", records)
+            # print("------> size of ", records)
 
             if not records:
                 print("Query result is empty.")
@@ -744,7 +858,7 @@ def save_edit_card_details():
                 ps_connection.commit()
 
             else:
-                print("------**********query result is there")
+                print("--*******query result is there")
                 if (
                     content["assign_task"] != records[0][1]
                     or content["issueType"] != records[0][4]
@@ -819,7 +933,7 @@ def save_edit_card_details():
 
             cur.close()
 
-        conn.putconn(ps_connection)
+        # conn.putconn(ps_connection)
         return jsonify({"message": "Ticket saved successfully"}), 200
 
     except (Exception, psycopg2.DatabaseError) as error:
@@ -831,6 +945,12 @@ def save_edit_card_details():
             "error_details": str(error),
         }
         return error_message
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 6th route to get the Head_Institute's name
@@ -897,7 +1017,7 @@ def db_get_customer_cities_head_institution_wise_data():
             records = cur.fetchall()
 
             records = np.unique(records)
-            print(records)
+            # print(records)
 
             # column  = []
             results = {}
@@ -939,57 +1059,89 @@ def db_get_customer_cities_head_institution_wise_data():
             "error_details": str(error),
         }
         return error_message
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 7th route when somenone clicks on the next before raise ticket modal opening
-# checked
 @app.route("/save_machine_and_customer_details", methods=["GET", "POST"])
 @cross_origin()
 def save_machine_and_customer_details():
     content = request.get_json(force=True)
+    # print("******", content)
     data = db_save_machine_and_customer_details(content)
     return jsonify(data)
 
 
 def db_save_machine_and_customer_details(json_obj):
-    l = []
+    # l = []
     try:
         ps_connection = conn.getconn()
         if ps_connection:
+            print("****************", json_obj)
             cur = ps_connection.cursor()
 
-            #     query_to_get_machine_and_custome_id = """
-            #     SELECT id, cusotmer_id FROM machine where code = %s
-            # """
-            #     cur.execute(query_to_get_machine_and_custome_id, [json_obj["machine_no"]])
-            #     records = cur.fetchall()
-            #     print("------------", records)
-
-            query_save_machine_and_customer_details = """
+            # query to save support_date and id in support table
+            query_save_date_and_id = """
             INSERT INTO SUPPORT
-            (machine_id, cusotmer_id)
+                (support_date)
             VALUES
-                (%s, %s)RETURNING id
+                (%s)RETURNING id
         """
-            # cur.execute(
-            #     query_save_machine_and_customer_details, (records[0][0], records[0][1])
-            # )
-            cur.execute(query_save_machine_and_customer_details, (1, 1))
+            cur.execute(query_save_date_and_id, (json_obj["support_date"],))
+            # cur.execute(query_save_machine_and_customer_details, (1, 1))
             ps_connection.commit()
 
             # Fetch the support_id
             inserted_id = cur.fetchone()[0]
-            print("inbhg ghjk h----------->", inserted_id)
+            print("new_ticket_id_generated----------->", inserted_id)
 
-            l.append(inserted_id)
-            l.append(json_obj["head_institution"])
-            l.append(json_obj["institution_name"])
-            l.append(json_obj["machine_no"])
+            # query_to_get_machine_and_custome_id
+            query_to_get_machine_and_custome_id = """
+                SELECT id, customer_id FROM machine where code = %s
+            """
 
-            cur.close
+            # created a temporary list to store the value of machine_no and customer_id of respective machine_no chosen
+            machine_customer_list = []
 
-        conn.putconn(ps_connection)
-        return l
+            if "machines" in json_obj:
+                # Iterate over the list of machines
+                for machine_data in json_obj["machines"]:
+                    machine_no = machine_data["machine_no"]
+                    cur.execute(query_to_get_machine_and_custome_id, (machine_no,))
+
+                    records = cur.fetchall()
+                    records[0] = list(records[0])
+                    records[0].append(inserted_id)
+                    machine_customer_list.append(records[0])
+                    # print("------------", records)
+                    # print("------------", machine_customer_list)
+
+            # print("------------", machine_customer_list)
+
+            # Now, this query is to insert the respective machine_id, customer_id, support_id in machine_customer_info table
+            query_to_insert_machine_customer_info = """
+                INSERT INTO machine_customer_info
+                (machine_id, customer_id, support_id)
+                VALUES
+                    (%s, %s, %s)
+            """
+            for row in machine_customer_list:
+                # print(row)
+                cur.execute(
+                    query_to_insert_machine_customer_info, (row[0], row[1], row[2])
+                )
+            ps_connection.commit()
+
+            json_obj["id"] = inserted_id
+            cur.close()
+
+        # conn.putconn(ps_connection)
+        return json_obj
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
@@ -1000,6 +1152,12 @@ def db_save_machine_and_customer_details(json_obj):
             "error_details": str(error),
         }
         return error_message
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # {
@@ -1010,7 +1168,7 @@ def db_save_machine_and_customer_details(json_obj):
 
 
 # 8th route for deleting things(card deletion and deletion of machine_id and cusotmer_id from suppport table)
-@app.route("/deleting_card_information", methods=["GET", "POST"])
+@app.route("/deleting_card_information", methods=["POST"])
 @cross_origin()
 def deleting_card_information():
     content = request.get_json(force=True)
@@ -1035,18 +1193,18 @@ def db_deleting_card_information(json_obj):
             # print("count -----", records)
 
             if count_support_id_in_tracking_table > 0:
-                query_to_delete_card_information2 = """
+                query_to_delete_card_information1 = """
                 DELETE FROM tracking_table
-                WHERE support_id = %s;
-            """
-                cur.execute(query_to_delete_card_information2, [json_obj["support_id"]])
+                    WHERE support_id = %s;
+                """
+                cur.execute(query_to_delete_card_information1, [json_obj["support_id"]])
                 ps_connection.commit()
 
             # to check whether data is present data in attachment table
             checking_query2 = """
             select count(*) FROM attachment 
-            WHERE support_id = %s
-        """
+                WHERE support_id = %s
+            """
             cur.execute(checking_query2, [json_obj["support_id"]])
             records = cur.fetchall()
             count_support_id_in_attachment_table = records[0][0]
@@ -1055,22 +1213,30 @@ def db_deleting_card_information(json_obj):
             if count_support_id_in_attachment_table > 0:
                 query_to_delete_card_information2 = """
                 DELETE FROM attachment
-                WHERE support_id = %s;
-            """
+                    WHERE support_id = %s;
+                """
                 cur.execute(query_to_delete_card_information2, [json_obj["support_id"]])
                 ps_connection.commit()
 
+            # query to delete machine and customer info from machine_customer_info table
+            query_to_delete_card_information3 = """
+            DELETE FROM machine_customer_info
+                WHERE support_id = %s;
+            """
+            cur.execute(query_to_delete_card_information3, [json_obj["support_id"]])
+            ps_connection.commit()
+
             # query to delete information of card from support table
-            query_to_delete_card_information1 = """
+            query_to_delete_card_information4 = """
             DELETE FROM support
-            WHERE id = %s;
-        """
-            cur.execute(query_to_delete_card_information1, [json_obj["support_id"]])
+                WHERE id = %s;
+            """
+            cur.execute(query_to_delete_card_information4, [json_obj["support_id"]])
             ps_connection.commit()
 
             cur.close()
 
-        conn.putconn(ps_connection)
+        # conn.putconn(ps_connection)
         return ({"message": "Ticket saved successfully"}), 200
 
     except (Exception, psycopg2.DatabaseError) as error:
@@ -1082,6 +1248,12 @@ def db_deleting_card_information(json_obj):
             "error_details": str(error),
         }
         return error_message
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 9th route to enter employee details
@@ -1115,7 +1287,7 @@ def db_get_employee_details():
             # print(user_dict)
             cur.close()
 
-        conn.putconn(ps_connection)
+        # conn.putconn(ps_connection)
         return user_dict
 
     except (Exception, psycopg2.DatabaseError) as error:
@@ -1127,6 +1299,12 @@ def db_get_employee_details():
             "error_details": str(error),
         }
         return error_message
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
 # 10th route to delete individual attachment
@@ -1156,7 +1334,7 @@ def delete_individual_attachments_from_db(json_obj):
             ps_connection.commit()
             cur.close()
 
-        conn.putconn(ps_connection)
+        # conn.putconn(ps_connection)
         return ({"message": "Ticket saved successfully"}), 200
 
     except (Exception, psycopg2.DatabaseError) as error:
@@ -1168,275 +1346,335 @@ def delete_individual_attachments_from_db(json_obj):
             "error_details": str(error),
         }
         return error_message
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
 
 
-ticket_data = {
-    "AMC JANGAON": [
-        {
-            "city": "AMC JANGAON",
-            "id": 235,
-            "machine_no": " AMC-J",
-            "state": "TELANGANA",
-        }
-    ],
-    "ANANT": [
-        {
-            "city": "AnantLocation",
-            "id": 233,
-            "machine_no": "11008",
-            "state": "null",
-        }
-    ],
-    "APSCSCL": [
-        {
-            "city": "hyderabad-office",
-            "id": 203,
-            "machine_no": "1235",
-            "state": "null",
-        }
-    ],
-    "Canada ": [
-        {
-            "city": "ETG Commodities INC",
-            "id": 229,
-            "machine_no": "CAN-1",
-            "state": "Swift current",
-        }
-    ],
-    "ENAM GUJARAT12": [
-        {"city": "8999", "id": 199, "machine_no": "898", "state": "Rajasthan"}
-    ],
-    "ENAM Haryana": [
-        {
-            "city": "Adampur",
-            "id": 144,
-            "machine_no": "1155",
-            "state": "Haryana",
-        },
-        {"city": "Ambala", "id": 145, "machine_no": "1156", "state": "Haryana"},
-        {
-            "city": "Assandh",
-            "id": 146,
-            "machine_no": "1157",
-            "state": "Haryana",
-        },
-        {
-            "city": "Barwala",
-            "id": 147,
-            "machine_no": "1158",
-            "state": "Haryana",
-        },
-    ],
-    "ENAM Rajasthan": [
-        {
-            "city": "Mandawri",
-            "id": 5,
-            "machine_no": "1013",
-            "state": "Rajasthan",
-        },
-        {
-            "city": "Mandore Jodhpur",
-            "id": 6,
-            "machine_no": "1014",
-            "state": "Rajasthan",
-        },
-        {
-            "city": "Shahpura",
-            "id": 7,
-            "machine_no": "1015",
-            "state": "Rajasthan",
-        },
-        {
-            "city": "Bhagat ki kothi",
-            "id": 8,
-            "machine_no": "1016",
-            "state": "Rajasthan",
-        },
-    ],
-    "FCI": [
-        {
-            "city": "RS Miryalaguda",
-            "id": 443,
-            "machine_no": "1355",
-            "state": "Telangana",
-        },
-        {
-            "city": "Sultanabad",
-            "id": 444,
-            "machine_no": "1346",
-            "state": "Telangana",
-        },
-        {
-            "city": "PSWC Bagli- Chawapail",
-            "id": 526,
-            "machine_no": "1438",
-            "state": "Punjab",
-        },
-        {
-            "city": "PSWC Rahon - RSD Khanna",
-            "id": 527,
-            "machine_no": "1440",
-            "state": "Punjab",
-        },
-    ],
-    "FRL-GUJRAT": [
-        {
-            "city": "Food Research Lab",
-            "id": 198,
-            "machine_no": "FRL",
-            "state": "Gujarat",
-        }
-    ],
-    "GHANA": [{"city": "ACCRA", "id": 221, "machine_no": "G1", "state": "GHANA"}],
-    "Gujarat SAMB": [
-        {
-            "city": "Gujarat SAMB",
-            "id": 236,
-            "machine_no": "SAMB",
-            "state": "gujarat",
-        }
-    ],
-    "Jharkhand": [
-        {
-            "city": "JSAMB",
-            "id": 234,
-            "machine_no": "JSAMB-1",
-            "state": "Jharkhand",
-        }
-    ],
-    "LIM": [
-        {
-            "city": "LIMAGRAIN",
-            "id": 223,
-            "machine_no": "101",
-            "state": "TELANGANA",
-        }
-    ],
-    "McCain Foods (India) Pvt Ltd": [
-        {
-            "city": "McCain Foods (India) Pvt Ltd",
-            "id": 230,
-            "machine_no": "McCain-1",
-            "state": "Gujarat",
-        }
-    ],
-    "NAGA LIMITED": [
-        {
-            "city": "DINDIGUL",
-            "id": 222,
-            "machine_no": "11002",
-            "state": "TAMIL-NADU",
-        }
-    ],
-    "NBHC": [
-        {
-            "city": "nbhc1",
-            "id": 204,
-            "machine_no": "8001",
-            "state": "Telangana",
-        },
-        {"city": "nbhc2", "id": 206, "machine_no": "8002", "state": "null"},
-        {"city": "nbhc3", "id": 207, "machine_no": "8003", "state": "null"},
-        {"city": "nbhc4", "id": 208, "machine_no": "8004", "state": "null"},
-    ],
-    "NEBULAA-DELHI": [
-        {"city": "NEBULAA", "id": 220, "machine_no": "NEB", "state": "DELHI"}
-    ],
-    "Nebulaa": [
-        {
-            "city": "Nebulaa-Hyderabad",
-            "id": 141,
-            "machine_no": "null",
-            "state": "Telangana",
-        },
-        {
-            "city": "Nebulaa-Jaipur",
-            "id": 202,
-            "machine_no": "NEBJ",
-            "state": "RAJASTHAN",
-        },
-    ],
-    "Nebulaa-Jaipur": [
-        {
-            "city": "Nebulaa-Jaipur",
-            "id": 205,
-            "machine_no": "NEBJA",
-            "state": "Rajasthan",
-        }
-    ],
-    "ORANGE SORTER": [
-        {
-            "city": "ORANGE SORTER COIMBATOR",
-            "id": 232,
-            "machine_no": "ORANGE-1",
-            "state": "TAMIL-NADU",
-        }
-    ],
-    "TSDOIT": [
-        {
-            "city": "Nizamabad1",
-            "id": 231,
-            "machine_no": "1237",
-            "state": "null",
-        },
-        {
-            "city": "Mahbubnagar",
-            "id": 218,
-            "machine_no": "1235",
-            "state": "TELANGANA",
-        },
-        {
-            "city": "Nizamabad",
-            "id": 219,
-            "machine_no": "1236",
-            "state": "TELANGANA",
-        },
-    ],
-    "hello": [{"city": "demo", "id": 200, "machine_no": "3422", "state": "Rajasthan"}],
-    "test": [{"city": "TEST1", "id": 201, "machine_no": "TEST", "state": "DD"}],
-}
+# 11th route to give last support_date from tracking_table to track the last changes done
+@app.route("/last_tracking_date", methods=["GET", "POST"])
+@cross_origin()
+def last_tracking_date():
+    content = request.get_json(force=True)
+    data = get_last_tracking_date_from_db(content)
+    return jsonify(data)
 
-data = [
-    [
-        "10",
-        "2023-12-22T08:42:40.229Z",
-        "hardware",
-        "Issue type: ",
-        "pending",
-        "high",
-        "vijay",
-        "ashish",
-        "online",
-        "navin",
-        "1307",
-    ],
-    [
-        "20",
-        "2023-12-22T08:42:40.229Z",
-        "software",
-        "Issue type: ",
-        "ongoing",
-        "MEDIUM",
-        "vijay",
-        "ashish",
-        "offline",
-        "navin",
-        "1308",
-    ],
-    [
-        "30",
-        "2023-12-22T08:42:40.229Z",
-        "hardware",
-        "Issue type: ",
-        "done",
-        "Low",
-        "vijay",
-        "ashish",
-        "online",
-        "navin",
-        "1309",
-    ],
-]
+
+def get_last_tracking_date_from_db(json_obj):
+    try:
+        ps_connection = conn.getconn()
+        if ps_connection:
+            cur = ps_connection.cursor()
+
+            # query to get last updated date from tracking_table
+            last_updated_date_query = """
+            SELECT support_date
+                FROM tracking_table
+                    WHERE support_id = %s
+                    AND support_date = (
+                    SELECT MAX(support_date)
+                    FROM tracking_table
+                WHERE support_id = %s
+            );
+        """
+            cur.execute(
+                last_updated_date_query,
+                (json_obj["support_id"], json_obj["support_id"]),
+            )
+            records = cur.fetchall()
+            print("okmg", records)
+            cur.close()
+
+        # conn.putconn(ps_connection)
+        return records[0]
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        status_code = getattr(error, "status_code", 500)
+        error_message = {
+            "status_code": status_code,
+            "message": "An error occurred",
+            "error_details": str(error),
+        }
+        return error_message
+    finally:
+        # Close the cursor and connection in the finally block
+        if "cur" in locals() and cur is not None:
+            cur.close()
+        if "ps_connection" in locals() and ps_connection is not None:
+            conn.putconn(ps_connection)
+
+
+# ticket_data = {
+#     "AMC JANGAON": [
+#         {
+#             "city": "AMC JANGAON",
+#             "id": 235,
+#             "machine_no": " AMC-J",
+#             "state": "TELANGANA",
+#         }
+#     ],
+#     "ANANT": [
+#         {
+#             "city": "AnantLocation",
+#             "id": 233,
+#             "machine_no": "11008",
+#             "state": "null",
+#         }
+#     ],
+#     "APSCSCL": [
+#         {
+#             "city": "hyderabad-office",
+#             "id": 203,
+#             "machine_no": "1235",
+#             "state": "null",
+#         }
+#     ],
+#     "Canada ": [
+#         {
+#             "city": "ETG Commodities INC",
+#             "id": 229,
+#             "machine_no": "CAN-1",
+#             "state": "Swift current",
+#         }
+#     ],
+#     "ENAM GUJARAT12": [
+#         {"city": "8999", "id": 199, "machine_no": "898", "state": "Rajasthan"}
+#     ],
+#     "ENAM Haryana": [
+#         {
+#             "city": "Adampur",
+#             "id": 144,
+#             "machine_no": "1155",
+#             "state": "Haryana",
+#         },
+#         {"city": "Ambala", "id": 145, "machine_no": "1156", "state": "Haryana"},
+#         {
+#             "city": "Assandh",
+#             "id": 146,
+#             "machine_no": "1157",
+#             "state": "Haryana",
+#         },
+#         {
+#             "city": "Barwala",
+#             "id": 147,
+#             "machine_no": "1158",
+#             "state": "Haryana",
+#         },
+#     ],
+#     "ENAM Rajasthan": [
+#         {
+#             "city": "Mandawri",
+#             "id": 5,
+#             "machine_no": "1013",
+#             "state": "Rajasthan",
+#         },
+#         {
+#             "city": "Mandore Jodhpur",
+#             "id": 6,
+#             "machine_no": "1014",
+#             "state": "Rajasthan",
+#         },
+#         {
+#             "city": "Shahpura",
+#             "id": 7,
+#             "machine_no": "1015",
+#             "state": "Rajasthan",
+#         },
+#         {
+#             "city": "Bhagat ki kothi",
+#             "id": 8,
+#             "machine_no": "1016",
+#             "state": "Rajasthan",
+#         },
+#     ],
+#     "FCI": [
+#         {
+#             "city": "RS Miryalaguda",
+#             "id": 443,
+#             "machine_no": "1355",
+#             "state": "Telangana",
+#         },
+#         {
+#             "city": "Sultanabad",
+#             "id": 444,
+#             "machine_no": "1346",
+#             "state": "Telangana",
+#         },
+#         {
+#             "city": "PSWC Bagli- Chawapail",
+#             "id": 526,
+#             "machine_no": "1438",
+#             "state": "Punjab",
+#         },
+#         {
+#             "city": "PSWC Rahon - RSD Khanna",
+#             "id": 527,
+#             "machine_no": "1440",
+#             "state": "Punjab",
+#         },
+#     ],
+#     "FRL-GUJRAT": [
+#         {
+#             "city": "Food Research Lab",
+#             "id": 198,
+#             "machine_no": "FRL",
+#             "state": "Gujarat",
+#         }
+#     ],
+#     "GHANA": [{"city": "ACCRA", "id": 221, "machine_no": "G1", "state": "GHANA"}],
+#     "Gujarat SAMB": [
+#         {
+#             "city": "Gujarat SAMB",
+#             "id": 236,
+#             "machine_no": "SAMB",
+#             "state": "gujarat",
+#         }
+#     ],
+#     "Jharkhand": [
+#         {
+#             "city": "JSAMB",
+#             "id": 234,
+#             "machine_no": "JSAMB-1",
+#             "state": "Jharkhand",
+#         }
+#     ],
+#     "LIM": [
+#         {
+#             "city": "LIMAGRAIN",
+#             "id": 223,
+#             "machine_no": "101",
+#             "state": "TELANGANA",
+#         }
+#     ],
+#     "McCain Foods (India) Pvt Ltd": [
+#         {
+#             "city": "McCain Foods (India) Pvt Ltd",
+#             "id": 230,
+#             "machine_no": "McCain-1",
+#             "state": "Gujarat",
+#         }
+#     ],
+#     "NAGA LIMITED": [
+#         {
+#             "city": "DINDIGUL",
+#             "id": 222,
+#             "machine_no": "11002",
+#             "state": "TAMIL-NADU",
+#         }
+#     ],
+#     "NBHC": [
+#         {
+#             "city": "nbhc1",
+#             "id": 204,
+#             "machine_no": "8001",
+#             "state": "Telangana",
+#         },
+#         {"city": "nbhc2", "id": 206, "machine_no": "8002", "state": "null"},
+#         {"city": "nbhc3", "id": 207, "machine_no": "8003", "state": "null"},
+#         {"city": "nbhc4", "id": 208, "machine_no": "8004", "state": "null"},
+#     ],
+#     "NEBULAA-DELHI": [
+#         {"city": "NEBULAA", "id": 220, "machine_no": "NEB", "state": "DELHI"}
+#     ],
+#     "Nebulaa": [
+#         {
+#             "city": "Nebulaa-Hyderabad",
+#             "id": 141,
+#             "machine_no": "null",
+#             "state": "Telangana",
+#         },
+#         {
+#             "city": "Nebulaa-Jaipur",
+#             "id": 202,
+#             "machine_no": "NEBJ",
+#             "state": "RAJASTHAN",
+#         },
+#     ],
+#     "Nebulaa-Jaipur": [
+#         {
+#             "city": "Nebulaa-Jaipur",
+#             "id": 205,
+#             "machine_no": "NEBJA",
+#             "state": "Rajasthan",
+#         }
+#     ],
+#     "ORANGE SORTER": [
+#         {
+#             "city": "ORANGE SORTER COIMBATOR",
+#             "id": 232,
+#             "machine_no": "ORANGE-1",
+#             "state": "TAMIL-NADU",
+#         }
+#     ],
+#     "TSDOIT": [
+#         {
+#             "city": "Nizamabad1",
+#             "id": 231,
+#             "machine_no": "1237",
+#             "state": "null",
+#         },
+#         {
+#             "city": "Mahbubnagar",
+#             "id": 218,
+#             "machine_no": "1235",
+#             "state": "TELANGANA",
+#         },
+#         {
+#             "city": "Nizamabad",
+#             "id": 219,
+#             "machine_no": "1236",
+#             "state": "TELANGANA",
+#         },
+#     ],
+#     "hello": [{"city": "demo", "id": 200, "machine_no": "3422", "state": "Rajasthan"}],
+#     "test": [{"city": "TEST1", "id": 201, "machine_no": "TEST", "state": "DD"}],
+# }
+
+# data = [
+#     [
+#         "10",
+#         "2023-12-22T08:42:40.229Z",
+#         "hardware",
+#         "Issue type: ",
+#         "pending",
+#         "high",
+#         "vijay",
+#         "ashish",
+#         "online",
+#         "navin",
+#         "1307",
+#     ],
+#     [
+#         "20",
+#         "2023-12-22T08:42:40.229Z",
+#         "software",
+#         "Issue type: ",
+#         "ongoing",
+#         "MEDIUM",
+#         "vijay",
+#         "ashish",
+#         "offline",
+#         "navin",
+#         "1308",
+#     ],
+#     [
+#         "30",
+#         "2023-12-22T08:42:40.229Z",
+#         "hardware",
+#         "Issue type: ",
+#         "done",
+#         "Low",
+#         "vijay",
+#         "ashish",
+#         "online",
+#         "navin",
+#         "1309",
+#     ],
+# ]
 # print("data->",data)
 
 
@@ -1500,8 +1738,9 @@ def support_page():
         ticket_data=get_customer_cities_head_institution_wise,
     )
 
-    # @app.route("/<issueType>")
-    # def issue_support_page(issueType):
+
+@app.route("/<issueType>")
+def issue_support_page(issueType):
     # print(issueType)
     get_customer_cities_head_institution_wise = requests.get(
         "http://127.0.0.1:5443/get_customer_cities_head_institution_wise_data"
