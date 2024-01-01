@@ -77,9 +77,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //*********** Pagination starts **********/
 
-  const cardsPerPage = 21;
   let originalData = [];
   let filteredData = [];
+  const cardsPerPage = 21;
+  let currentPage = 1;
 
 
   fetch(url + '/all_data', {
@@ -93,8 +94,8 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("Data from server:", data);
       originalData = data;
       filteredData = data;
-      displayPage(1);
-      updatePaginationButtons(1, calculateTotalPages());
+      displayPage(currentPage);
+      updatePaginationButtons(currentPage, calculateTotalPages());
     })
     .catch((error) => {
       console.error("Error fetching data:", error);
@@ -1508,21 +1509,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const previousButton = createPaginationButton('Previous', () => {
       if (currentPage > 1) {
-        displayPage(currentPage - 1);
+        currentPage--;
+        displayPage(currentPage);
+        updatePaginationButtons(currentPage, totalPages);
       }
     });
     paginationContainer.appendChild(previousButton);
 
     for (let i = 1; i <= totalPages; i++) {
       const pageButton = createPaginationButton(i, () => {
-        displayPage(i);
+        currentPage = i;
+        displayPage(currentPage);
+        updatePaginationButtons(currentPage, totalPages);
       });
+      if (i === currentPage) {
+        pageButton.classList.add('active'); // Add a class to highlight the active page
+      }
       paginationContainer.appendChild(pageButton);
     }
 
     const nextButton = createPaginationButton('Next', () => {
       if (currentPage < totalPages) {
-        displayPage(currentPage + 1);
+        currentPage++;
+        displayPage(currentPage);
+        updatePaginationButtons(currentPage, totalPages);
       }
     });
     paginationContainer.appendChild(nextButton);

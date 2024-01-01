@@ -69,6 +69,12 @@
   font-weight: bold;
 }
 
+button.active {
+  font-weight: bold;
+  background-color: #dacfcf;
+  border-radius: 1px;
+}
+
 #resultDropdown {
   display: none;
   border: 1px solid #ccc;
