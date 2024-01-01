@@ -38,74 +38,39 @@ document.addEventListener("DOMContentLoaded", function () {
   // }
 
 
-  // navLinks.forEach(function (link) {
-  //   link.addEventListener("click", function (event) {
-  //     // Prevent the default action of the link
-  //     event.preventDefault();
+  navLinks.forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      // Prevent the default action of the link
+      // event.preventDefault();
 
-  //     console.log(this)
-  //     // Remove 'active' class from all nav-links
-  //     navLinks.forEach(function (navLink) {
-  //       navLink.classList.remove("active");
-  //     });
+      // console.log(this.innerText)
+      // Remove 'active' class from all nav-links
+      navLinks.forEach(function (navLink) {
+        navLink.classList.remove("active");
+      });
 
-  //     // Add 'active' class to the clicked nav-link
-  //     this.classList.add("active");
-  //   });
-  // });
+      // Add 'active' class to the clicked nav-link
+      this.classList.add("active");
+    });
+  });
 
   // handle button clicks and apply bold font
   const buttons = document.querySelectorAll('.nav-link');
 
-  buttons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Check if the clicked button is the "All" button
-      const isAllButton = button.id === 'allButton';
+  // buttons.forEach(button => {
+  //   button.addEventListener('click', () => {
+  //     // Check if the clicked button is the "All" button
+  //     const isAllButton = button.id === 'allButton';
 
-      // Remove bold class from all buttons
-      buttons.forEach(btn => {
-        if (isAllButton && btn !== button) {
-          btn.classList.remove('bold');
-        } else if (!isAllButton) {
-          btn.classList.remove('bold');
-        }
-      });
+  //     // Remove bold class from all buttons
+  //     buttons.forEach(btn => {
+  //       if (isAllButton && btn !== button) {
+  //         btn.classList.remove('bold');
+  //       } else if (!isAllButton) {
+  //         btn.classList.remove('bold');
+  //       }
+  //     });
 
-      // Add bold class to the clicked button
-      button.classList.add('bold');
-    });
-  });
-
-  const statusButtons = document.querySelectorAll('.link-item');
-
-  statusButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Remove bold class from all buttons
-      statusButtons.forEach(btn => btn.classList.remove('bold'));
-
-      // Add bold class to the clicked button
-      button.classList.add('bold');
-    });
-  });
-
-  const buttonsFinal = document.querySelectorAll('.nav-link, .link-item');
-
-  buttonsFinal.forEach(button => {
-    button.addEventListener('click', () => {
-      // Check if the clicked button is the "All" button
-      const isAllButton = button.id === 'allButton';
-
-      // Remove bold class from all buttons
-      if (isAllButton) {
-        buttonsFinal.forEach(btn => {
-          btn.classList.remove('bold');
-        });
-
-        // Add bold class to the clicked button
-        button.classList.add('bold');
-      }
-    });
-  });
 
 
 
@@ -135,11 +100,187 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error fetching data:", error);
     });
 
+  //********   filters *******/
+
+  // const pendingCheckbox = document.getElementById('pendingCheckbox');
+  // const ongoingCheckbox = document.getElementById('ongoingCheckbox');
+  // const internetissueCheckbox = document.getElementById('internetissueCheckbox');
+  // const doneCheckbox = document.getElementById('doneCheckbox');
+
+  // // create a new variable to store the updated orginaData now 
+  // let neworiginalData;
+  // // event listner for pendingCheckbox
+  // pendingCheckbox.addEventListener('change', function () {
+  //   neworiginalData = originalData;
+  //   navLinks.forEach(function (navLink) {
+  //     // Check if the current navLink has the 'active' class
+  //     if (navLink.classList.contains("active")) {
+  //       // console.log(navLink.innerText)
+  //       if (navLink.innerText.toLowerCase() === "all") {
+  //         neworiginalData = originalData;
+  //       }
+  //       else if (navLink.innerText.toLowerCase() === "software") {
+  //         neworiginalData = originalData.filter(data => {
+  //           const issueCondition = data[2] && data[2] === "software";
+  //           return issueCondition;
+  //         });
+  //       }
+  //       else if (navLink.innerText.toLowerCase() === "data") {
+  //         neworiginalData = originalData.filter(data => {
+  //           const issueCondition = data[2] && data[2] === "datateam";
+  //           return issueCondition;
+  //         });
+  //       }
+  //       else if (navLink.innerText.toLowerCase() === "hardware") {
+  //         neworiginalData = originalData.filter(data => {
+  //           const issueCondition = data[2] && data[2] === "hardware";
+  //           return issueCondition;
+  //         });
+  //       }
+  //     }
+  //   });
+
+  //   if (this.checked) {
+  //     console.log("pending checkbox is checked ")
+  //     filteredData = neworiginalData.filter(data => {
+  //       const stateCondition = data[4] && data[4].toLowerCase() === "pending";
+  //       return stateCondition;
+  //     });
+  //     // Display the filtered data
+  //     displayPage(1);
+  //     updatePaginationButtons(1, calculateTotalPages());
+  //   }
+
+  //   else {
+  //     console.log('Pending checkbox is unchecked');
+  //     filteredData = neworiginalData;
+  //     // Display the filtered data
+  //     displayPage(1);
+  //     updatePaginationButtons(1, calculateTotalPages());
+  //   }
+  // });
+
+
+
+
+  // Final Filters added
+  const filterConditions = {
+    'pendingCheckbox': (data) => data[4] && data[4].toLowerCase() === 'pending',
+    'ongoingCheckbox': (data) => data[4] && data[4].toLowerCase() === 'ongoing',
+    'internetissueCheckbox': (data) => data[4] && data[4].toLowerCase() === 'internetissue',
+    'doneCheckbox': (data) => data[4] && data[4].toLowerCase() === 'done'
+  };
+
+  const checkboxes = [
+    document.getElementById('pendingCheckbox'),
+    document.getElementById('ongoingCheckbox'),
+    document.getElementById('internetissueCheckbox'),
+    document.getElementById('doneCheckbox')
+  ];
+
+  let neworiginalData;
+
+  checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+      neworiginalData = originalData;
+
+      navLinks.forEach(function (navLink) {
+        if (navLink.classList.contains("active")) {
+          const navLinkText = navLink.innerText.toLowerCase();
+          neworiginalData = filterData(navLinkText, neworiginalData);
+        }
+      });
+
+      if (this.checked) {
+        console.log(`${checkbox.id} checkbox is checked`);
+        filteredData = neworiginalData.filter(data => filterConditions[checkbox.id](data));
+      } else {
+        console.log(`${checkbox.id} checkbox is unchecked`);
+        filteredData = neworiginalData;
+      }
+
+      displayPage(1);
+      updatePaginationButtons(1, calculateTotalPages());
+    });
+  });
+
+  function filterData(navLinkText, data) {
+    switch (navLinkText) {
+      case "all":
+        return originalData;
+      case "software":
+        return data.filter(dataItem => dataItem[2] && dataItem[2] === "software");
+      case "data":
+        return data.filter(dataItem => dataItem[2] && dataItem[2] === "datateam");
+      case "hardware":
+        return data.filter(dataItem => dataItem[2] && dataItem[2] === "hardware");
+      default:
+        return data;
+    }
+  }
+
+
+
+
+
+
+
+
+  // Add event listeners to All
+  document.getElementById('allButton').addEventListener('click', () => {
+    console.log("clickedAll")
+    filteredData = originalData;
+    displayPage(1);
+    updatePaginationButtons(1, calculateTotalPages());
+  });
+
+  // Add event listeners to hardware
+  document.getElementById('hardwareButton').addEventListener('click', () => {
+    console.log("clickedhardware")
+    filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'hardware');
+    displayPage(1);
+    updatePaginationButtons(1, calculateTotalPages());
+  });
+
+  // Add event listeners to software
+  document.getElementById('softwareButton').addEventListener('click', () => {
+    console.log("clickedsoftware")
+    filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'software');
+    displayPage(1);
+    updatePaginationButtons(1, calculateTotalPages());
+  });
+
+  // Add event listeners to data
+  document.getElementById('dataButton').addEventListener('click', () => {
+    console.log("clickedata")
+    filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'datateam');
+    displayPage(1);
+    updatePaginationButtons(1, calculateTotalPages());
+  });
+
+
+
   // Event listener for search input
   const searchBox = document.querySelector('.search-box');
   searchBox.addEventListener('input', function () {
     applySearchFilter();
   });
+
+  // ****** search machine and name filter ******
+  function applySearchFilter() {
+    const searchTerm = searchBox.value.trim().toLowerCase();
+    filteredData = originalData.filter(data => {
+      const machineNumber = String(data[12]);
+      // console.log("***machine no****", machineNumber)
+      let assign_task = data[6];
+      // let ticket_id = String(data[0])
+      // || ticket_id.toLowerCase().includes(searchTerm)
+
+      return (machineNumber.toLowerCase().includes(searchTerm) || (assign_task && assign_task.toLowerCase().includes(searchTerm)));
+    });
+    displayPage(1);
+    updatePaginationButtons(1, calculateTotalPages());
+  }
 
 
   // ********** raise ticket search filter functions *********
@@ -304,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // edit assign task
     let editAssignedTaskHTML = "";
     editAssignedTaskOptions.forEach((assign_task_option, i) => {
-      console.log(data[8], typeof data[8]);
+      // console.log(data[8], typeof data[8]);
       // const option = document.createElement("option");
       // option.value = i;
       // option.textContent = assign_task_option;
@@ -723,20 +864,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // console.log(delete_attachments);
   }
 
-  // ****** search machine and name filter ******
-  function applySearchFilter() {
-    const searchTerm = searchBox.value.trim().toLowerCase();
-    filteredData = originalData.filter(data => {
-      const machineNumber = String(data[12]);
-      // console.log("***machine no****", machineNumber)
-      let assign_task = data[6];
-      let ticket_id = String(data[0])
 
-      return (machineNumber.toLowerCase().includes(searchTerm) || (assign_task && assign_task.toLowerCase().includes(searchTerm)) || ticket_id.toLowerCase().includes(searchTerm));
-    });
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  }
 
 
   //s.id, -0
@@ -1013,7 +1141,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             tableData += `</tbody>
         </table>`;
-            console.log("data:", tableData);
+            // console.log("data:", tableData);
 
             const Assigned_Task_To =
               data[0][8] == "" || data[0][8] == null
@@ -1272,7 +1400,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let edit_id;
       edit_btn.addEventListener("click", async function () {
         edit_id = data[0]
-        console.log("working******************###########", edit_id);
+        console.log("working edit_id for this specific card", edit_id);
         const payload = {
           id: edit_id,
         };
@@ -1299,7 +1427,12 @@ document.addEventListener("DOMContentLoaded", function () {
             // Handle errors or display an error message to the user
           });
 
-        display_attachments(edit_id, ShowEditAttachments, true);
+        if (data[4] && data[4].toLowerCase() === 'done') {
+          display_attachments(edit_id, ShowEditAttachments, false);
+        }
+        else {
+          display_attachments(edit_id, ShowEditAttachments, true);
+        }
 
         document
           .getElementById("saveChangesButton")
@@ -1408,151 +1541,8 @@ document.addEventListener("DOMContentLoaded", function () {
     return Math.ceil(filteredData.length / cardsPerPage);
   }
 
-  //********   filters *******/
-  // Add event listeners to All
-  // document.getElementById('allButton').addEventListener('click', () => {
-  //   console.log("clickedAll")
-  //   filteredData = originalData;
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
-
-  // Add event listeners to hardware
-  // document.getElementById('hardwareButton').addEventListener('click', () => {
-  //   console.log("clickedhardware")
-  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'hardware');
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
-
-  // Add event listeners to software
-  // document.getElementById('softwareButton').addEventListener('click', () => {
-  //   console.log("clickedsoftware")
-  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'software');
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
-  // Add event listeners to data
-  // document.getElementById('dataButton').addEventListener('click', () => {
-  //   console.log("clickedata")
-  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'datateam');
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
-
-  // Add event listeners to pending
-  // document.getElementById('pendingButton').addEventListener('click', () => {
-  //   console.log("clickedpending")
-  //   filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'pending');
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
-
-  // Add event listeners to ongoing
-  // document.getElementById('ongoingButton').addEventListener('click', () => {
-  //   console.log("clickedOngoing")
-  //   filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'ongoing');
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
-
-  // Add event listeners to internetissue
-  // document.getElementById('internetissueButton').addEventListener('click', () => {
-  //   console.log("clickedInternetIssue")
-  //   filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'internetissue');
-
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
-
-  // Add event listeners to done state
-  // document.getElementById('doneButton').addEventListener('click', () => {
-  //   console.log("clickedone")
-  //   filteredData = originalData.filter(data => data[4] !== null && data[4].toLowerCase() === 'done');
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
-
-  let activeFilters = []; // Initialize an array to store active filters
-
-  // Function to apply filters and update display
-  function applyFilters() {
-    if (activeFilters.length === 0) {
-      // If no filters selected, show all data
-      filteredData = originalData;
-    } else {
-      // Apply filters based on the activeFilters array
-      filteredData = originalData.filter(data =>
-        activeFilters.every(filter =>
-          filter === 'hardware' || filter === 'software' || filter === 'datateam'
-            ? data[2] !== null && data[2].toLowerCase() === filter
-            : data[4] !== null && data[4].toLowerCase() === filter
-        )
-      );
-    }
-
-    // Update display
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  }
-
-  // Event listeners for filter buttons
-  document.getElementById('allButton').addEventListener('click', () => {
-    console.log("clickedAll");
-    activeFilters = [];
-    applyFilters();
-  });
-
-  document.getElementById('hardwareButton').addEventListener('click', () => {
-    console.log("clickedhardware");
-    toggleFilter('hardware');
-  });
-
-  document.getElementById('softwareButton').addEventListener('click', () => {
-    console.log("clickedsoftware");
-    toggleFilter('software');
-  });
-
-  document.getElementById('dataButton').addEventListener('click', () => {
-    console.log("clickedata");
-    toggleFilter('datateam');
-  });
-
-  document.getElementById('pendingButton').addEventListener('click', () => {
-    console.log("clickedpending");
-    toggleFilter('pending');
-  });
-
-  document.getElementById('ongoingButton').addEventListener('click', () => {
-    console.log("clickedOngoing");
-    toggleFilter('ongoing');
-  });
-
-  document.getElementById('internetissueButton').addEventListener('click', () => {
-    console.log("clickedInternetIssue");
-    toggleFilter('internetissue');
-  });
-
-  document.getElementById('doneButton').addEventListener('click', () => {
-    console.log("clickedone");
-    toggleFilter('done');
-  });
-
-  // Function to toggle filter in the array
-  function toggleFilter(filter) {
-    const index = activeFilters.indexOf(filter);
-    if (index === -1) {
-      // Add filter if not present
-      activeFilters.push(filter);
-    } else {
-      // Remove filter if already present
-      activeFilters.splice(index, 1);
-    }
-    applyFilters();
-  }
-
-
   //****pagination ends here ************/
+
 
 
 
@@ -1592,6 +1582,7 @@ document.addEventListener("DOMContentLoaded", function () {
       checkboxesContainer.innerHTML = ""; // Close down by clearing content
     }
   });
+
   //******** search box in create ticket filter ended here **********/ 
 
 
@@ -1608,13 +1599,22 @@ document.addEventListener("DOMContentLoaded", function () {
     let selectedOptionsContainer = document.getElementById("selectedOptionsContainer");
     let selectedOptions = Array.from(selectedOptionsContainer.children);
 
+    // Remove the delete or cross sign ("×") from each selected option
+    selectedOptions.forEach(option => {
+      let removeButton = option.querySelector(".removeButton");
+      if (removeButton) {
+        option.removeChild(removeButton);
+      }
+    });
+
     // Skip the first element (heading) and extract machine details from selected options
     let machinesList = selectedOptions.slice(1).map(option => {
       let optionValue = option.innerText.trim().split(",");
       return {
         head_institution: optionValue[0],
         institution_name: optionValue[1],
-        machine_no: optionValue[2].replace(/\s*×\s*$/, ''), // Remove remove button text
+        machine_no: optionValue[2], // No need to replace the remove button text
+        // machine_no: optionValue[2].replace(/\s*×\s*$/, ''), // Remove remove button text
       };
     });
 

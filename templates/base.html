@@ -37,7 +37,7 @@
               <div class="navbar-nav w-100">
                 <ul class="nav nav-tabs m-3 w-100">
                   <li class="nav-item">
-                    <a class="nav-link nav-all-route" id="allButton" aria-current="page" href="#">ALL</a>
+                    <a class="nav-link active nav-all-route" id="allButton" aria-current="page" href="#">ALL</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link nav-software-route" id="softwareButton" aria-current="page" href="#">Software</a>
@@ -73,12 +73,30 @@
       <!-- left card filers  -->
       <div class="p-2 flex-shrink-1 bd-highlight">
         <div class="d-flex flex-column bd-highlight mb-3">
-          <div class="p-2 bd-highlight text-nowrap link-item" id="pendingButton">Pending</div>
+          <!-- <div class="p-2 bd-highlight text-nowrap link-item" id="pendingButton">Pending</div>
           <div class="p-2 bd-highlight text-nowrap link-item" id="ongoingButton">Ongoing</div>
           <div class="p-2 bd-highlight text-nowrap link-item" id="internetissueButton">
             InternetIssue
           </div>
-          <div class="p-2 bd-highlight text-nowrap link-item" id="doneButton">Done</div>
+          <div class="p-2 bd-highlight text-nowrap link-item" id="doneButton">Done</div> -->
+          <div class="p-2 bd-highlight text-nowrap link-item">
+            <input type="checkbox" class="state-checkbox" id="pendingCheckbox">
+            <label for="pendingCheckbox">Pending</label>
+          </div>
+          <div class="p-2 bd-highlight text-nowrap link-item">
+            <input type="checkbox" class="state-checkbox" id="ongoingCheckbox">
+            <label for="ongoingCheckbox">Ongoing</label>
+          </div>
+          <div class="p-2 bd-highlight text-nowrap link-item">
+            <input type="checkbox" class="state-checkbox" id="internetissueCheckbox">
+            <label for="internetissueCheckbox">InternetIssue</label>
+          </div>
+          <div class="p-2 bd-highlight text-nowrap link-item">
+            <input type="checkbox" class="state-checkbox" id="doneCheckbox">
+            <label for="doneCheckbox">Done</label>
+          </div>
+
+
           <!--
               <div class="p-2 bd-highlight text-nowrap link-item">Clear All</div>
             -->
