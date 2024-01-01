@@ -118,11 +118,14 @@ def create_support_table_in_db():
         print(error)
         return False
 
+
 @app.route("/create_tracking_table", methods=["GET", "POST"])
 @cross_origin()
 def create_tracking_table():
     data = create_tracking_table_in_db()
     return data
+
+
 def create_tracking_table_in_db():
     try:
         ps_connection = conn.getconn()
@@ -155,18 +158,22 @@ def create_tracking_table_in_db():
         print(error)
         return False
 
+
 @app.route("/create_attachment_table", methods=["GET", "POST"])
 @cross_origin()
 def create_attachment_table():
     data = create_attachment_table_in_db()
     return data
+
+
 def create_attachment_table_in_db():
     try:
         ps_connection = conn.getconn()
         if ps_connection:
             cur = ps_connection.cursor()
 
-            cur.execute("""
+            cur.execute(
+                """
                 CREATE TABLE attachment (
                     id SERIAL PRIMARY KEY,
                     filename TEXT,
@@ -174,7 +181,45 @@ def create_attachment_table_in_db():
                     data BYTEA,
                     support_id INT REFERENCES support(id)
                 );  
-            """)
+            """
+            )
+
+            ps_connection.commit()
+            print("table created successfully.................")
+            cur.close()
+
+        conn.putconn(ps_connection)
+        return jsonify({"message": "Table created successfully"}), 200
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return False
+
+
+# creating new table for machine and customer detail storage
+@app.route("/create_machine_customer_info_table", methods=["GET", "POST"])
+@cross_origin()
+def create_attachmecreate_machine_customer_info_tablent_table():
+    data = create_machine_customer_info_table_in_db()
+    return data
+
+
+def create_machine_customer_info_table_in_db():
+    try:
+        ps_connection = conn.getconn()
+        if ps_connection:
+            cur = ps_connection.cursor()
+
+            cur.execute(
+                """
+                CREATE TABLE machine_customer_info (
+                    id SERIAL PRIMARY KEY,
+                    machine_id INT REFERENCES machine(id),
+                    customer_id INT REFERENCES customer(id),
+                    support_id INT REFERENCES support(id)
+                ); 
+            """
+            )
 
             ps_connection.commit()
             print("table created successfully.................")

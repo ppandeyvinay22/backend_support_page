@@ -57,19 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // handle button clicks and apply bold font
   const buttons = document.querySelectorAll('.nav-link');
 
-  // buttons.forEach(button => {
-  //   button.addEventListener('click', () => {
-  //     // Check if the clicked button is the "All" button
-  //     const isAllButton = button.id === 'allButton';
 
-  //     // Remove bold class from all buttons
-  //     buttons.forEach(btn => {
-  //       if (isAllButton && btn !== button) {
-  //         btn.classList.remove('bold');
-  //       } else if (!isAllButton) {
-  //         btn.classList.remove('bold');
-  //       }
-  //     });
 
 
 
@@ -101,8 +89,34 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error fetching data:", error);
     });
 
-  //********   filters *******/
 
+
+  //******** filters *******//
+
+  // Event listener for search input
+  const searchBox = document.querySelector('.search-box');
+  searchBox.addEventListener('input', function () {
+    applySearchFilter();
+  });
+
+  // ****** search machine and name filter ******
+  function applySearchFilter() {
+    const searchTerm = searchBox.value.trim().toLowerCase();
+    filteredData = originalData.filter(data => {
+      const machineNumber = String(data[12]);
+      // console.log("***machine no****", machineNumber)
+      let assign_task = data[6];
+      // let ticket_id = String(data[0])
+      // || ticket_id.toLowerCase().includes(searchTerm)
+
+      return (machineNumber.toLowerCase().includes(searchTerm) || (assign_task && assign_task.toLowerCase().includes(searchTerm)));
+    });
+    displayPage(1);
+    updatePaginationButtons(1, calculateTotalPages());
+  }
+
+
+  // ***** adding support_state filters for specific names and machines *****
   // const pendingCheckbox = document.getElementById('pendingCheckbox');
   // const ongoingCheckbox = document.getElementById('ongoingCheckbox');
   // const internetissueCheckbox = document.getElementById('internetissueCheckbox');
@@ -113,33 +127,35 @@ document.addEventListener("DOMContentLoaded", function () {
   // // event listner for pendingCheckbox
   // pendingCheckbox.addEventListener('change', function () {
   //   neworiginalData = originalData;
-  //   navLinks.forEach(function (navLink) {
-  //     // Check if the current navLink has the 'active' class
-  //     if (navLink.classList.contains("active")) {
-  //       // console.log(navLink.innerText)
-  //       if (navLink.innerText.toLowerCase() === "all") {
-  //         neworiginalData = originalData;
-  //       }
-  //       else if (navLink.innerText.toLowerCase() === "software") {
-  //         neworiginalData = originalData.filter(data => {
-  //           const issueCondition = data[2] && data[2] === "software";
-  //           return issueCondition;
-  //         });
-  //       }
-  //       else if (navLink.innerText.toLowerCase() === "data") {
-  //         neworiginalData = originalData.filter(data => {
-  //           const issueCondition = data[2] && data[2] === "datateam";
-  //           return issueCondition;
-  //         });
-  //       }
-  //       else if (navLink.innerText.toLowerCase() === "hardware") {
-  //         neworiginalData = originalData.filter(data => {
-  //           const issueCondition = data[2] && data[2] === "hardware";
-  //           return issueCondition;
-  //         });
-  //       }
-  //     }
-  //   });
+  //   // navLinks.forEach(function (navLink) {
+  //   //   // Check if the current navLink has the 'active' class
+  //   //   if (navLink.classList.contains("active")) {
+  //   //     // console.log(navLink.innerText)
+  //   //     if (navLink.innerText.toLowerCase() === "all") {
+  //   //       neworiginalData = originalData;
+  //   //     }
+  //   //     else if (navLink.innerText.toLowerCase() === "software") {
+  //   //       neworiginalData = originalData.filter(data => {
+  //   //         const issueCondition = data[2] && data[2] === "software";
+  //   //         return issueCondition;
+  //   //       });
+  //   //     }
+  //   //     else if (navLink.innerText.toLowerCase() === "data") {
+  //   //       neworiginalData = originalData.filter(data => {
+  //   //         const issueCondition = data[2] && data[2] === "datateam";
+  //   //         return issueCondition;
+  //   //       });
+  //   //     }
+  //   //     else if (navLink.innerText.toLowerCase() === "hardware") {
+  //   //       neworiginalData = originalData.filter(data => {
+  //   //         const issueCondition = data[2] && data[2] === "hardware";
+  //   //         return issueCondition;
+  //   //       });
+  //   //     }
+  //   //   }
+  //   // });
+
+
 
   //   if (this.checked) {
   //     console.log("pending checkbox is checked ")
@@ -163,8 +179,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+  // Final Filters added for pending, ongoing, internetissue, done with all, sofware, data, hardware
 
-  // Final Filters added
+  function filterData(navLinkText, data) {
+    switch (navLinkText) {
+      case "all":
+        return originalData;
+      case "software":
+        return data.filter(dataItem => dataItem[2] && dataItem[2] === "software");
+      case "data":
+        return data.filter(dataItem => dataItem[2] && dataItem[2] === "datateam");
+      case "hardware":
+        return data.filter(dataItem => dataItem[2] && dataItem[2] === "hardware");
+      default:
+        return data;
+    }
+  }
+
   const filterConditions = {
     'pendingCheckbox': (data) => data[4] && data[4].toLowerCase() === 'pending',
     'ongoingCheckbox': (data) => data[4] && data[4].toLowerCase() === 'ongoing',
@@ -205,26 +236,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  function filterData(navLinkText, data) {
-    switch (navLinkText) {
-      case "all":
-        return originalData;
-      case "software":
-        return data.filter(dataItem => dataItem[2] && dataItem[2] === "software");
-      case "data":
-        return data.filter(dataItem => dataItem[2] && dataItem[2] === "datateam");
-      case "hardware":
-        return data.filter(dataItem => dataItem[2] && dataItem[2] === "hardware");
-      default:
-        return data;
-    }
-  }
-
-
-
-
-
-
 
 
   // Add event listeners to All
@@ -261,27 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-  // Event listener for search input
-  const searchBox = document.querySelector('.search-box');
-  searchBox.addEventListener('input', function () {
-    applySearchFilter();
-  });
 
-  // ****** search machine and name filter ******
-  function applySearchFilter() {
-    const searchTerm = searchBox.value.trim().toLowerCase();
-    filteredData = originalData.filter(data => {
-      const machineNumber = String(data[12]);
-      // console.log("***machine no****", machineNumber)
-      let assign_task = data[6];
-      // let ticket_id = String(data[0])
-      // || ticket_id.toLowerCase().includes(searchTerm)
-
-      return (machineNumber.toLowerCase().includes(searchTerm) || (assign_task && assign_task.toLowerCase().includes(searchTerm)));
-    });
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
-  }
 
 
   // ********** raise ticket search filter functions *********
