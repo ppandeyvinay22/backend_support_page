@@ -20,15 +20,15 @@ import numpy as np
 app = Flask(__name__)
 CORS(app)
 
-# conn = psycopg2.pool.SimpleConnectionPool(
-#     1,
-#     40,
-#     user="nebulaa",
-#     password="nebulaa1234",
-#     host="164.52.211.223",
-#     port="5432",
-#     database="neodb_development",
-# )
+conn = psycopg2.pool.SimpleConnectionPool(
+    1,
+    40,
+    user="nebulaa",
+    password="nebulaa1234",
+    host="os.nebulaa.in",
+    port="5432",
+    database="neodb_development",
+)
 
 # conn = psycopg2.pool.SimpleConnectionPool(
 #     1,
@@ -39,15 +39,15 @@ CORS(app)
 #     port="5430",
 #     database="nebulaa_dev_db",
 # )
-conn = psycopg2.pool.SimpleConnectionPool(
-    1,
-    40,
-    user="postgres",
-    password="Vinay@121",
-    host="localhost",
-    port="5432",
-    database="neodb_development",
-)
+# conn = psycopg2.pool.SimpleConnectionPool(
+#     1,
+#     40,
+#     user="postgres",
+#     password="Vinay@121",
+#     host="localhost",
+#     port="5432",
+#     database="neodb_development",
+# )
 
 
 # **********Nebulaa support API's to fetch data from db**************

@@ -255,6 +255,10 @@ button.active {
   display: none;
 }
 
+#paginationContainer {
+  text-align: end;
+}
+
 span,
 p {
   /* border: 2px solid red; */

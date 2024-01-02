@@ -1,5 +1,5 @@
 let Statue_Sort = [];
-// const url = "http://127.0.0.1:5559";
+// const furl = "http://127.0.0.1:5559"; frontend url which is same as backedn this time
 const url = "http://127.0.0.1:5443";
 
 let ticket_data = "";
@@ -54,9 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // handle button clicks and apply bold font
-  const buttons = document.querySelectorAll('.nav-link');
-
 
 
 
@@ -94,26 +91,97 @@ document.addEventListener("DOMContentLoaded", function () {
   //******** filters *******//
 
   // Event listener for search input
+  // const searchBox = document.querySelector('.search-box');
+  // searchBox.addEventListener('input', function () {
+  //   applySearchFilter();
+  // });
+
+  // // ****** search machine and name filter ******
+  // function applySearchFilter() {
+  //   const searchTerm = searchBox.value.trim().toLowerCase();
+  //   filteredData = originalData.filter(data => {
+  //     const machineNumber = String(data[12]);
+  //     // console.log("***machine no****", machineNumber)
+  //     let assign_task = data[6];
+  //     // let ticket_id = String(data[0])
+  //     // || ticket_id.toLowerCase().includes(searchTerm)
+
+  //     return (machineNumber.toLowerCase().includes(searchTerm) || (assign_task && assign_task.toLowerCase().includes(searchTerm)));
+  //   });
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // }
+
+  // ...
+  const checkBoxes = document.querySelectorAll('.state-checkbox');
+
+  checkBoxes.forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+      if (this.checked) {
+        // Uncheck all checkboxes except the one that was clicked
+        checkBoxes.forEach(function (otherCheckbox) {
+          if (otherCheckbox !== checkbox) {
+            otherCheckbox.checked = false;
+          }
+        });
+      }
+    });
+  });
+
+
+
+  // Event listener for search input
   const searchBox = document.querySelector('.search-box');
   searchBox.addEventListener('input', function () {
     applySearchFilter();
   });
 
-  // ****** search machine and name filter ******
+  // Function to apply search filter
   function applySearchFilter() {
     const searchTerm = searchBox.value.trim().toLowerCase();
-    filteredData = originalData.filter(data => {
+
+    // Use the appropriate filtered data based on the active navLink
+    let activeNavLinkText;
+    navLinks.forEach(function (navLink) {
+      if (navLink.classList.contains("active")) {
+        activeNavLinkText = navLink.innerText.toLowerCase();
+      }
+    });
+
+    let filteredDataForSearch;
+
+    // Apply search filter based on the active navLink
+    switch (activeNavLinkText) {
+      case "all":
+        filteredDataForSearch = originalData;
+        break;
+      case "software":
+        filteredDataForSearch = originalData.filter(data => data[2] && data[2].toLowerCase() === "software");
+        break;
+      case "data":
+        filteredDataForSearch = originalData.filter(data => data[2] && data[2].toLowerCase() === "datateam");
+        break;
+      case "hardware":
+        filteredDataForSearch = originalData.filter(data => data[2] && data[2].toLowerCase() === "hardware");
+        break;
+      default:
+        filteredDataForSearch = originalData;
+    }
+
+    // Apply the search filter to the filteredDataForSearch
+    filteredData = filteredDataForSearch.filter(data => {
       const machineNumber = String(data[12]);
-      // console.log("***machine no****", machineNumber)
       let assign_task = data[6];
-      // let ticket_id = String(data[0])
-      // || ticket_id.toLowerCase().includes(searchTerm)
 
       return (machineNumber.toLowerCase().includes(searchTerm) || (assign_task && assign_task.toLowerCase().includes(searchTerm)));
     });
+
     displayPage(1);
     updatePaginationButtons(1, calculateTotalPages());
   }
+
+  // ...
+
 
 
   // ***** adding support_state filters for specific names and machines *****
@@ -238,37 +306,98 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
+
   // Add event listeners to All
   document.getElementById('allButton').addEventListener('click', () => {
-    console.log("clickedAll")
-    filteredData = originalData;
+    console.log("clickedAll");
+
+    if (areCheckboxesChecked()) {
+      // Apply state filter based on the selected checkboxes
+      filteredData = originalData.filter(data => checkboxes.some(checkbox => checkbox.checked && filterConditions[checkbox.id](data)));
+    } else {
+      filteredData = originalData;
+    }
+
     displayPage(1);
     updatePaginationButtons(1, calculateTotalPages());
   });
 
   // Add event listeners to hardware
   document.getElementById('hardwareButton').addEventListener('click', () => {
-    console.log("clickedhardware")
-    filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'hardware');
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
+    console.log("clickedhardware");
+    applyStateFilter('hardware');
   });
 
   // Add event listeners to software
   document.getElementById('softwareButton').addEventListener('click', () => {
-    console.log("clickedsoftware")
-    filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'software');
-    displayPage(1);
-    updatePaginationButtons(1, calculateTotalPages());
+    console.log("clickedsoftware");
+    applyStateFilter('software');
   });
 
   // Add event listeners to data
   document.getElementById('dataButton').addEventListener('click', () => {
-    console.log("clickedata")
-    filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'datateam');
+    console.log("clickedata");
+    applyStateFilter('datateam');
+  });
+
+  // Function to check if any checkboxes are checked
+  function areCheckboxesChecked() {
+    return checkboxes.some(checkbox => checkbox.checked);
+  }
+
+  // Function to apply state filter based on the selected category
+  function applyStateFilter(category) {
+    if (areCheckboxesChecked()) {
+      filteredData = originalData.filter(data => checkboxes.some(checkbox => checkbox.checked && filterConditions[checkbox.id](data) && data[2] && data[2].toLowerCase() === category));
+    } else {
+      filteredData = originalData.filter(data => data[2] && data[2].toLowerCase() === category);
+    }
+
     displayPage(1);
     updatePaginationButtons(1, calculateTotalPages());
-  });
+  }
+
+
+
+
+
+
+
+
+
+  // Add event listeners to All
+  // document.getElementById('allButton').addEventListener('click', () => {
+  //   console.log("clickedAll")
+  //   filteredData = originalData;
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
+
+  // // Add event listeners to hardware
+  // document.getElementById('hardwareButton').addEventListener('click', () => {
+  //   console.log("clickedhardware")
+  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'hardware');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
+
+  // // Add event listeners to software
+  // document.getElementById('softwareButton').addEventListener('click', () => {
+  //   console.log("clickedsoftware")
+  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'software');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
+
+  // // Add event listeners to data
+  // document.getElementById('dataButton').addEventListener('click', () => {
+  //   console.log("clickedata")
+  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'datateam');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
+
 
 
 
@@ -411,8 +540,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // (24)c.instituition_code
 
     document.getElementById("edit_modal_head_institution").innerText = data[22][0];
-    document.getElementById("edit_modal_location").innerText = data[23];
-    document.getElementById("edit_modal_machine_no").innerText = data[24];
+    document.getElementById("edit_modal_location").innerText = data[23].join(', ');
+    console.log("machine_no in edit form:", data[23]);
+    document.getElementById("edit_modal_machine_no").innerText = data[24].join(', ');
 
     const editAssignedTask = document.getElementById("editAssignedTask");
     const editSupportMode = document.getElementById("editSupportMode");
@@ -1098,6 +1228,7 @@ document.addEventListener("DOMContentLoaded", function () {
           })
           .then((data) => {
             // console.log(data);
+            // console.log("loaction and machine numer respectively:-", data[0][23], data[0][24])
             let tableData = data[1].length
               ? `<h4 class="mt-5 ">Track Issues</h4>
         <table class="table text-center">
@@ -1272,14 +1403,14 @@ document.addEventListener("DOMContentLoaded", function () {
               <label for="inputEmail4" class="form-label fw-bold">Locations</label>
               <div class="form-control read-only-box bg-light" readonly>
                   <!-- Your read-only content goes here -->
-                  ${data[0][23]}
+                  ${data[0][23].join(', ')}
               </div>
           </div>
           <div class="col-md-4">
               <label for="inputEmail4" class="form-label fw-bold">Machines</label>
               <div class="form-control read-only-box bg-light" readonly>
                   <!-- Your read-only content goes here -->
-                  ${data[0][24]}
+                  ${data[0][24].join(', ')}
               </div>
           </div>
 
