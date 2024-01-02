@@ -55,11 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-
-
-
-
-
   //*********** Pagination starts **********/
 
   let originalData = [];
@@ -89,6 +84,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   //******** filters *******//
+  // If one is checked, keep others unchecked
+  const checkBoxes = document.querySelectorAll('.state-checkbox');
+
+  checkBoxes.forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+      if (this.checked) {
+        // Uncheck all checkboxes except the one that was clicked
+        checkBoxes.forEach(function (otherCheckbox) {
+          if (otherCheckbox !== checkbox) {
+            otherCheckbox.checked = false;
+          }
+        });
+      }
+    });
+  });
+
 
   // Event listener for search input
   // const searchBox = document.querySelector('.search-box');
@@ -112,25 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
   //   updatePaginationButtons(1, calculateTotalPages());
   // }
 
-  // ...
-  const checkBoxes = document.querySelectorAll('.state-checkbox');
-
-  checkBoxes.forEach(function (checkbox) {
-    checkbox.addEventListener('change', function () {
-      if (this.checked) {
-        // Uncheck all checkboxes except the one that was clicked
-        checkBoxes.forEach(function (otherCheckbox) {
-          if (otherCheckbox !== checkbox) {
-            otherCheckbox.checked = false;
-          }
-        });
-      }
-    });
-  });
-
-
-
-  // Event listener for search input
+  // Made link with nav-link for search filters
   const searchBox = document.querySelector('.search-box');
   searchBox.addEventListener('input', function () {
     applySearchFilter();
@@ -180,8 +173,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updatePaginationButtons(1, calculateTotalPages());
   }
 
-  // ...
-
 
 
   // ***** adding support_state filters for specific names and machines *****
@@ -222,9 +213,6 @@ document.addEventListener("DOMContentLoaded", function () {
   //   //     }
   //   //   }
   //   // });
-
-
-
   //   if (this.checked) {
   //     console.log("pending checkbox is checked ")
   //     filteredData = neworiginalData.filter(data => {
@@ -247,7 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-  // Final Filters added for pending, ongoing, internetissue, done with all, sofware, data, hardware
+  // This one is for combining nav-link and state-checkboxes
 
   function filterData(navLinkText, data) {
     switch (navLinkText) {
@@ -305,9 +293,24 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
+  // Add event listeners to All
+  // document.getElementById('allButton').addEventListener('click', () => {
+  //   console.log("clickedAll")
+  //   filteredData = originalData;
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
+
+  // // Add event listeners to hardware
+  // document.getElementById('hardwareButton').addEventListener('click', () => {
+  //   console.log("clickedhardware")
+  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'hardware');
+  //   displayPage(1);
+  //   updatePaginationButtons(1, calculateTotalPages());
+  // });
 
 
-
+  //This is just for nav-links
   // Add event listeners to All
   document.getElementById('allButton').addEventListener('click', () => {
     console.log("clickedAll");
@@ -359,44 +362,145 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
+  // Event listener for search input and state checkboxes combined
+  // const searchBox = document.querySelector('.search-box');
+  searchBox.addEventListener('input', function () {
+    applyCombinedFilters();
+  });
 
+  checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+      applyCombinedFilters();
+    });
+  });
 
+  // Function to apply both state and search filters
+  function applyCombinedFilters() {
+    const searchTerm = searchBox.value.trim().toLowerCase();
 
+    // Use the appropriate filtered data based on the active navLink
+    let activeNavLinkText;
+    navLinks.forEach(function (navLink) {
+      if (navLink.classList.contains("active")) {
+        activeNavLinkText = navLink.innerText.toLowerCase();
+      }
+    });
 
+    let filteredDataForState;
+    let filteredDataForSearch;
 
+    // Apply state filter based on the active navLink
+    switch (activeNavLinkText) {
+      case "all":
+        filteredDataForState = originalData;
+        break;
+      case "software":
+        filteredDataForState = originalData.filter(data => data[2] && data[2].toLowerCase() === "software");
+        break;
+      case "data":
+        filteredDataForState = originalData.filter(data => data[2] && data[2].toLowerCase() === "datateam");
+        break;
+      case "hardware":
+        filteredDataForState = originalData.filter(data => data[2] && data[2].toLowerCase() === "hardware");
+        break;
+      default:
+        filteredDataForState = originalData;
+    }
 
+    // Apply the search filter to the filteredDataForState
+    filteredDataForSearch = filteredDataForState.filter(data => {
+      const machineNumber = String(data[12]);
+      let assign_task = data[6];
 
-  // Add event listeners to All
-  // document.getElementById('allButton').addEventListener('click', () => {
-  //   console.log("clickedAll")
-  //   filteredData = originalData;
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
+      return (machineNumber.toLowerCase().includes(searchTerm) || (assign_task && assign_task.toLowerCase().includes(searchTerm)));
+    });
+
+    // Apply state filter based on the selected checkboxes
+    checkboxes.forEach(function (checkbox) {
+      if (checkbox.checked) {
+        const stateFilter = filterConditions[checkbox.id];
+        filteredDataForSearch = filteredDataForSearch.filter(data => stateFilter(data));
+      }
+    });
+
+    // Assign the final result to filteredData
+    filteredData = filteredDataForSearch;
+
+    displayPage(1);
+    updatePaginationButtons(1, calculateTotalPages());
+  }
+
+  // **********final combination between nav-link and search_bar
+  // Event listener for nav links
+  navLinks.forEach(function (navLink) {
+    navLink.addEventListener('click', function () {
+      applyFilters();
+    });
+  });
+
+  // Event listener for checkboxes
+  // checkboxes.forEach(function (checkbox) {
+  //   checkbox.addEventListener('change', function () {
+  //     applyFilters();
+  //   });
   // });
 
-  // // Add event listeners to hardware
-  // document.getElementById('hardwareButton').addEventListener('click', () => {
-  //   console.log("clickedhardware")
-  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'hardware');
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
+  // Function to apply both nav link and checkbox filters
+  function applyFilters() {
+    const searchTerm = searchBox.value.trim().toLowerCase();
 
-  // // Add event listeners to software
-  // document.getElementById('softwareButton').addEventListener('click', () => {
-  //   console.log("clickedsoftware")
-  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'software');
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
+    // Use the appropriate filtered data based on the active navLink
+    let activeNavLinkText;
+    navLinks.forEach(function (navLink) {
+      if (navLink.classList.contains("active")) {
+        activeNavLinkText = navLink.innerText.toLowerCase();
+      }
+    });
 
-  // // Add event listeners to data
-  // document.getElementById('dataButton').addEventListener('click', () => {
-  //   console.log("clickedata")
-  //   filteredData = originalData.filter(data => data[2] !== null && data[2].toLowerCase() === 'datateam');
-  //   displayPage(1);
-  //   updatePaginationButtons(1, calculateTotalPages());
-  // });
+    let filteredDataForNav;
+    let filteredDataForCheckbox;
+    let filteredDataForSearch;
+
+    // Apply nav link filter based on the active navLink
+    switch (activeNavLinkText) {
+      case "all":
+        filteredDataForNav = originalData;
+        break;
+      case "software":
+        filteredDataForNav = originalData.filter(data => data[2] && data[2].toLowerCase() === "software");
+        break;
+      case "data":
+        filteredDataForNav = originalData.filter(data => data[2] && data[2].toLowerCase() === "datateam");
+        break;
+      case "hardware":
+        filteredDataForNav = originalData.filter(data => data[2] && data[2].toLowerCase() === "hardware");
+        break;
+      default:
+        filteredDataForNav = originalData;
+    }
+
+    // Apply search filter to the filteredDataForNav
+    filteredDataForSearch = filteredDataForNav.filter(data => {
+      const machineNumber = String(data[12]);
+      let assign_task = data[6];
+
+      return (machineNumber.toLowerCase().includes(searchTerm) || (assign_task && assign_task.toLowerCase().includes(searchTerm)));
+    });
+
+    // Apply checkbox filter based on the selected checkboxes
+    checkboxes.forEach(function (checkbox) {
+      if (checkbox.checked) {
+        const stateFilter = filterConditions[checkbox.id];
+        filteredDataForCheckbox = filteredDataForSearch.filter(data => stateFilter(data));
+      }
+    });
+
+    // Assign the final result to filteredData
+    filteredData = filteredDataForCheckbox || filteredDataForSearch;
+
+    displayPage(1);
+    updatePaginationButtons(1, calculateTotalPages());
+  }
 
 
 
