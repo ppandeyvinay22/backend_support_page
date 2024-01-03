@@ -95,7 +95,7 @@ def create_support_table_in_db():
                     support_remark TEXT,
                     generated_by TEXT,
                     visit_required BOOLEAN,
-                    visit_required_date TEXT,
+                    visit_start_date TEXT,
                     visit_end_date TEXT,
                     assign_task TEXT,
                     expense INTEGER,
