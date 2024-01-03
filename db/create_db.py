@@ -89,7 +89,7 @@ def create_support_table_in_db():
                     resolution_detail TEXT,
                     resolution_date TEXT,
                     resolved_by TEXT,
-                    customer_id INTEGER,
+                    cusotmer_id INTEGER,
                     component_detail TEXT,
                     machine_id INTEGER,
                     support_remark TEXT,
