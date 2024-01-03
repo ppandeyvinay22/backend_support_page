@@ -136,7 +136,7 @@ def create_tracking_table_in_db():
                 """
                 CREATE TABLE tracking_table (
                     id SERIAL PRIMARY KEY,
-                    assigned_task TEXT,
+                    assign_task TEXT,
                     support_state TEXT,
                     support_date TEXT,
                     resolution_date TEXT,
