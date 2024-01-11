@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // });
 
 
-  //This is just for nav-links
+  //This is for nav-links with checkboxes
   // Add event listeners to All
   document.getElementById('allButton').addEventListener('click', () => {
     console.log("clickedAll");
@@ -501,10 +501,6 @@ document.addEventListener("DOMContentLoaded", function () {
     displayPage(1);
     updatePaginationButtons(1, calculateTotalPages());
   }
-
-
-
-
 
 
 

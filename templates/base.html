@@ -16,7 +16,7 @@
 </head>
 
 <body>
-  <div class="container my-3 position-relative">
+  <div class="my-3 position-relative">
     <!-- raise ticket popup -->
     <div class="alert alert-success position-absolute top-5 end-0 z-2 d-none" id="raise_ticket_alert_success">
       <strong>Congratulations!</strong> You ticket saved succesfully.
@@ -90,6 +90,10 @@
           <div class="p-2 bd-highlight text-nowrap link-item">
             <input type="checkbox" class="state-checkbox" id="internetissueCheckbox">
             <label for="internetissueCheckbox">InternetIssue</label>
+          </div>
+          <div class="p-2 bd-highlight text-nowrap link-item">
+            <input type="checkbox" class="state-checkbox" id="validationCheckbox">
+            <label for="validationCheckbox">Validation</label>
           </div>
           <div class="p-2 bd-highlight text-nowrap link-item">
             <input type="checkbox" class="state-checkbox" id="doneCheckbox">
@@ -243,10 +247,21 @@
                     </div>
                     <!-- commitment days -->
                     <div class="col-sm-4">
-                      <label for="commitment_days" class="form-label">Commitment days:
+                      <label for="commitment_days" class="form-label">Commitment Time(in Hrs):
                       </label>
-                      <input type="number" id="commitment_days" name="commitment_days" class="form-control" min="0"
-                        max="10" />
+                      <!-- <input type="number" id="commitment_days" name="commitment_days" class="form-control" min="0"
+                        max="10" /> -->
+                      <select id="commitment_days" class="form-select">
+                        <option selected>Choose...</option>
+                        <option>1 </option>
+                        <option>2 </option>
+                        <option>3 </option>
+                        <option>4 </option>
+                        <option>6 </option>
+                        <option>12 </option>
+                        <option>24 </option>
+                        <option>48 </option>
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -440,7 +455,7 @@
               </div>
               <!-- Commitment days  -->
               <div class="col-sm-4">
-                <label for="editCommitmentDays" class="form-label">Commitment days:
+                <label for="editCommitmentDays" class="form-label">Commitment Time (in Hrs):
                 </label>
                 <input type="number" id="editCommitmentDays" name="quantity" class="form-control" min="0" max="10" />
               </div>
